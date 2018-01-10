@@ -1,0 +1,4 @@
+# Git ignore file
+
+node_modules/
+config
