@@ -6,7 +6,7 @@ const constants = require('../constants');
 class JeopardyCommand extends Command {
   constructor() {
     super('jeopardy', {
-      aliases: ['jeopardy', 'quiz', 'trivia'],
+      aliases: constants.jeopardyAliases,
       channelRestriction: 'guild',
       cooldown: constants.jeopardyCooldown
     });
@@ -40,12 +40,13 @@ class JeopardyCommand extends Command {
         }
       );
       collector.on('collect', m => {
-        const triggers = [''];
-        if (m == 'quit') {
+        if (m == 'quit' || m == constants.prefix + 'quit') {
           collector.stop(1);
         } else if (
-          m.toString().startsWith(constants.prefix) &&
-          ['jeopardy', 'quiz', 'trivia'].indexOf(m.toString() > -1)
+          // check whether the message is another call to jeopardy
+          constants.jeopardyAliases.indexOf(
+            m.toString().substring(constants.prefix.length)
+          ) > -1
         ) {
           // trying to start a new round
           collector.stop(2);
