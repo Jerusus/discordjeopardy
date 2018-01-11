@@ -1,5 +1,4 @@
 const Discord = require('discord.js');
-const config = require('../config');
 const { AkairoClient } = require('discord-akairo');
 const constants = require('./constants');
 
@@ -15,6 +14,6 @@ const client = new AkairoClient(
   }
 );
 
-client.login(config.token).then(() => {
+client.login(process.env.TOKEN).then(() => {
   console.log('Logged in!');
 });
