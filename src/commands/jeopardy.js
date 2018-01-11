@@ -51,6 +51,12 @@ class JeopardyCommand extends Command {
           collector.stop(2);
         } else if (isQuestionFormat(m)) {
           if (isAnswerCorrect(m, answer)) {
+            // TODO update score and text below
+            message.channel.send(
+              `That is correct, ${
+                m.author.username
+              }! Your score is now +$${value} (TBD)`
+            );
             collector.stop(3);
           } else {
             // TODO update score and text below
@@ -62,7 +68,7 @@ class JeopardyCommand extends Command {
           }
         }
       });
-      collector.on('end', (collected, reason) => {
+      collector.on('end', (m, reason) => {
         // 0: quit
         // 1: timeout
         // 2: start a new round before current one is over
@@ -70,13 +76,6 @@ class JeopardyCommand extends Command {
         if (reason == 1) {
           message.channel.send(
             `Time's up! The correct answer was \`${answer}\`.`
-          );
-        } else if (reason == 3) {
-          // TODO update score and text below
-          message.channel.send(
-            `That is correct, ${
-              m.author.username
-            }! Your score is now +$${value} (TBD)`
           );
         }
         console.log(reason);
@@ -90,10 +89,19 @@ class JeopardyCommand extends Command {
 }
 
 function isAnswerCorrect(message, answer) {
-  let text = message.toString();
-  var similarity = stringSimilarity.compareTwoStrings(text, answer);
-  console.log('Similarity: ', similarity);
-  if (similarity > 0.5) {
+  let text = message
+    .toString()
+    .replace(/[^\w\s]/i, '')
+    .replace(
+      /^(what is|what are|whats|where is|where are|wheres|who is|who are|whos) /i,
+      ''
+    )
+    .toLowerCase();
+  var similarity = stringSimilarity.compareTwoStrings(
+    text,
+    answer.toLowerCase()
+  );
+  if (similarity > constants.similarityThreshold) {
     return true;
   } else {
     return false;
