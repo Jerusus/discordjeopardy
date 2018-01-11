@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Jerusus/discordjeopardy.git"
   },
-  "keywords": [ "discord", "trivia", "jeopardy" ],
+  "keywords": ["discord", "trivia", "jeopardy"],
   "author": "Jerusus",
   "license": "MIT",
   "bugs": {

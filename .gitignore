@@ -1,5 +1,6 @@
 # Git ignore file
 
 .npmrc
+.vscode/
 node_modules/
 config.json
