@@ -73,7 +73,7 @@ class JeopardyCommand extends Command {
         // 1: timeout
         // 2: start a new round before current one is over
         // 3: correct answer
-        if (reason == 1) {
+        if (reason == 1 || reason == 2) {
           message.channel.send(
             `Time's up! The correct answer was \`${answer}\`.`
           );
