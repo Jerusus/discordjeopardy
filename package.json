@@ -2,6 +2,9 @@
   "name": "discordjeopardy",
   "version": "1.0.0",
   "description": "A Jeopardy! bot for Discord",
+  "engines": {
+    "node": "8.9.4"
+  },
   "main": "src/app.js",
   "scripts": {
     "start": "node src/app.js",
