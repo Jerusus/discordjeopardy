@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Jerusus/discordjeopardy#readme",
   "dependencies": {
     "discord-akairo": "^7.5.1",
-    "discord.js": "^11.2.1"
+    "discord.js": "^11.2.1",
+    "snekfetch": "^3.6.1"
   }
 }
