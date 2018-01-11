@@ -2,7 +2,7 @@
   "name": "discordjeopardy",
   "version": "1.0.0",
   "description": "A Jeopardy! bot for Discord",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
