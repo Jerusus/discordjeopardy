@@ -1,12 +1,14 @@
 const { Command } = require('discord-akairo');
 const { get } = require('snekfetch');
+const stringSimilarity = require('string-similarity');
+const constants = require('../constants');
 
 class JeopardyCommand extends Command {
   constructor() {
     super('jeopardy', {
       aliases: ['jeopardy', 'quiz', 'trivia'],
       channelRestriction: 'guild',
-      cooldown: 2000
+      cooldown: constants.jeopardyCooldown
     });
   }
 
@@ -27,12 +29,86 @@ class JeopardyCommand extends Command {
     }\` for $${value}: ${question}`;
     message.channel.send(prompt);
 
-    console.log(question);
+    // TODO get rid of this, you cheater
     console.log(answer);
-    console.log(value);
 
-    return;
+    const finish = await new Promise((resolve, reject) => {
+      const collector = message.channel.createMessageCollector(
+        m => m.author.username != 'JeopardyBot',
+        {
+          time: constants.roundTime
+        }
+      );
+      collector.on('collect', m => {
+        const triggers = [''];
+        if (m == 'quit') {
+          collector.stop(1);
+        } else if (
+          m.toString().startsWith(constants.prefix) &&
+          ['jeopardy', 'quiz', 'trivia'].indexOf(m.toString() > -1)
+        ) {
+          // trying to start a new round
+          collector.stop(2);
+        } else if (isQuestionFormat(m)) {
+          if (isAnswerCorrect(m, answer)) {
+            collector.stop(3);
+          } else {
+            // TODO update score and text below
+            message.channel.send(
+              `That is incorrect, ${
+                m.author.username
+              }. Your score is now -$${value} (TBD)`
+            );
+          }
+        }
+      });
+      collector.on('end', (collected, reason) => {
+        // 0: quit
+        // 1: timeout
+        // 2: start a new round before current one is over
+        // 3: correct answer
+        if (reason == 1) {
+          message.channel.send(
+            `Time's up! The correct answer was \`${answer}\`.`
+          );
+        } else if (reason == 3) {
+          // TODO update score and text below
+          message.channel.send(
+            `That is correct, ${
+              m.author.username
+            }! Your score is now +$${value} (TBD)`
+          );
+        }
+        console.log(reason);
+        return resolve(reason);
+      });
+    });
+
+    // TODO logic depending on the value of 'finish', from resolve
+    return message.reply('done');
   }
+}
+
+function isAnswerCorrect(message, answer) {
+  let text = message.toString();
+  var similarity = stringSimilarity.compareTwoStrings(text, answer);
+  console.log('Similarity: ', similarity);
+  if (similarity > 0.5) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+// strip punctuation and crude check for question format
+// returns truthy value if it is
+function isQuestionFormat(message) {
+  let text = message.toString();
+  return text
+    .replace(/[^\w\s]/i, '')
+    .match(
+      /^(what is|what are|whats|where is|where are|wheres|who is|who are|whos) /i
+    );
 }
 
 module.exports = JeopardyCommand;
