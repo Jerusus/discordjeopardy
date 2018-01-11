@@ -2,7 +2,7 @@ const { Command } = require('discord-akairo');
 
 class PingCommand extends Command {
   constructor() {
-    super('ping', undefined, {
+    super('ping', {
       aliases: [ 'ping' ],
       channelRestriction: 'guild'
     });

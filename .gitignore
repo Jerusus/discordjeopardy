@@ -1,4 +1,5 @@
 # Git ignore file
 
+.npmrc
 node_modules/
 config.json
