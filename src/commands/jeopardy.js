@@ -26,7 +26,7 @@ class JeopardyCommand extends Command {
 
     const prompt = `The category is \`${
       category.title
-    }\` for $${value}: ${question}`;
+    }\` for $${value}: \`${question}\``;
     message.channel.send(prompt);
 
     // TODO get rid of this, you cheater
@@ -84,7 +84,8 @@ class JeopardyCommand extends Command {
     });
 
     // TODO logic depending on the value of 'finish', from resolve
-    return message.reply('done');
+    console.log('Round finished!');
+    return;
   }
 }
 
