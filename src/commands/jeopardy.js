@@ -24,9 +24,9 @@ class JeopardyCommand extends Command {
       );
     const { answer, question, value, category } = res[0];
 
-    const prompt = `The category is \`${
+    const prompt = `The category is **${
       category.title
-    }\` for $${value}: \`${question}\``;
+    }** for $${value}:\n\`\`\`${question}\`\`\``;
     message.channel.send(prompt);
 
     // TODO get rid of this, you cheater
