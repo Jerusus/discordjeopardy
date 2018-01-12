@@ -76,7 +76,7 @@ class JeopardyCommand extends Command {
         // 3: correct answer
         if (reason == 1 || reason == 2) {
           message.channel.send(
-            `Time's up! The correct answer was \`${answer}\`.`
+            `Time's up! The correct answer was **${answer}**.`
           );
         }
         console.log(reason);
