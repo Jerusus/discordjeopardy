@@ -93,7 +93,13 @@ async function getQuestion() {
   // grab the jeopardy question and parse
   const url = 'http://www.jservice.io/api/random';
   let res = JSON.parse((await get(url)).text)[0];
-  if (!res.question || res.question == 'null' || res.question.trim() == '') {
+  if (
+    !res.question ||
+    res.question == 'null' ||
+    res.question.trim() == '' ||
+    res.question == '=' ||
+    res.answer == '='
+  ) {
     res = getQuestion();
   }
   return res;
