@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git+https://github.com/Jerusus/discordjeopardy.git"
   },
-  "keywords": ["discord", "trivia", "jeopardy"],
+  "keywords": ["discord", "trivia", "jeopardy", "quiz"],
   "author": "Jerusus",
   "license": "MIT",
   "bugs": {
@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Jerusus/discordjeopardy#readme",
   "dependencies": {
+    "aws-sdk": "^2.180.0",
     "discord-akairo": "^7.5.1",
     "discord.js": "^11.2.1",
     "snekfetch": "^3.6.1",

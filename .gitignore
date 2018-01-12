@@ -3,3 +3,4 @@
 .npmrc
 .vscode/
 node_modules/
+data/

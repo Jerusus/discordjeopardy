@@ -2,6 +2,6 @@
   "prefix": "t.",
   "jeopardyAliases": ["jeopardy", "quiz", "trivia", "q"],
   "roundTime": 60000,
-  "jeopardyCooldown": 2000,
+  "jeopardyCooldown": 3000,
   "similarityThreshold": 0.65
 }

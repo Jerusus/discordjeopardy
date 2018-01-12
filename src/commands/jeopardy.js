@@ -2,6 +2,42 @@ const { Command } = require('discord-akairo');
 const { get } = require('snekfetch');
 const stringSimilarity = require('string-similarity');
 const constants = require('../constants');
+const AWS = require('aws-sdk');
+// const fs = require('fs');
+
+// set up persistence for scores
+const tableName = 'PlayerData';
+AWS.config.update({
+  region: 'us-west-2'
+});
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+// console.log('Importing player data into DynamoDB...');
+// const players = JSON.parse(fs.readFileSync('./data/playerdata.json', 'utf8'));
+// players.forEach(function(player) {
+//   var params = {
+//     TableName: tableName,
+//     Item: {
+//       UserId: player.UserId,
+//       Score: player.Score
+//     }
+//   };
+
+//   docClient.put(params, function(err, data) {
+//     if (err) {
+//       console.error(
+//         'Unable to add entry',
+//         player.UserId,
+//         '. Error JSON:',
+//         JSON.stringify(err, null, 2)
+//       );
+//     } else {
+//       console.log('PutItem succeeded:', player.UserId);
+//     }
+//   });
+// });
+// console.log('Done importing!');
 
 class JeopardyCommand extends Command {
   constructor() {
@@ -29,7 +65,7 @@ class JeopardyCommand extends Command {
     message.channel.send(prompt);
 
     // TODO get rid of this, you cheater
-    console.log(answer);
+    console.log('Answer:', answer);
 
     const finish = await new Promise((resolve, reject) => {
       const collector = message.channel.createMessageCollector(
@@ -40,7 +76,7 @@ class JeopardyCommand extends Command {
       );
       collector.on('collect', m => {
         if (m == 'quit' || m == constants.prefix + 'quit') {
-          collector.stop(0);
+          collector.stop('quit');
         } else if (
           // check whether the message is another call to jeopardy
           constants.jeopardyAliases.indexOf(
@@ -48,37 +84,28 @@ class JeopardyCommand extends Command {
           ) > -1
         ) {
           // trying to start a new round
-          collector.stop(2);
+          collector.stop('restart');
         } else if (isQuestionFormat(m)) {
           if (isAnswerCorrect(m, answer)) {
-            // TODO update score and text below
-            message.channel.send(
-              `That is correct, ${
-                m.author.username
-              }! Your score is now +$${value} (TBD)`
-            );
-            collector.stop(3);
+            updatePlayerScore(m, value);
+            collector.stop('correct');
           } else {
-            // TODO update score and text below
-            message.channel.send(
-              `That is incorrect, ${
-                m.author.username
-              }. Your score is now -$${value} (TBD)`
-            );
+            updatePlayerScore(m, 0 - value);
           }
         }
       });
       collector.on('end', (m, reason) => {
-        // 0: quit
-        // 1: timeout (not ever passed)
-        // 2: start a new round before current one is over
-        // 3: correct answer
-        if (!(reason == 3)) {
+        // quit: quit
+        // time: timeout
+        // restart: start a new round before current one is over
+        // correct: correct answer
+        if (!(reason == 'correct')) {
           message.channel.send(
             `Time's up! The correct answer was **${answer}**.`
           );
+        } else {
+          message.channel.send(`The correct answer was **${answer}**.`);
         }
-        console.log(reason);
         return resolve(reason);
       });
     });
@@ -134,6 +161,85 @@ function isQuestionFormat(message) {
     .match(
       /^(what is|what are|whats|where is|where are|wheres|who is|who are|whos) /i
     );
+}
+
+function updatePlayerScore(m, valueChange) {
+  const correctness = valueChange > 0 ? 'correct' : 'incorrect';
+  const excitement = valueChange > 0 ? '!' : '.';
+
+  const readParams = {
+    TableName: tableName,
+    Key: {
+      UserId: m.author.id
+    }
+  };
+
+  docClient.get(readParams, function(err, data) {
+    if (err) {
+      m.channel.send(
+        `That is ${correctness}, ${
+          m.author.username
+        }${excitement} Err: Database down.`
+      );
+      console.error(
+        'Unable to read item. Error JSON:',
+        JSON.stringify(err, null, 2)
+      );
+    } else {
+      if (data.Item == undefined) {
+        // player doesn't exist in the db
+        console.log('New player!', m.author.id);
+        const newParams = {
+          TableName: tableName,
+          Item: {
+            UserId: m.author.id,
+            Score: valueChange
+          }
+        };
+        docClient.put(newParams, function(err, data) {
+          if (err) {
+            console.error(
+              'Unable to add item. Error JSON:',
+              JSON.stringify(err, null, 2)
+            );
+          } else {
+            m.channel.send(
+              `That is ${correctness}, ${
+                m.author.username
+              }${excitement} Your score is now $${valueChange}.`
+            );
+          }
+        });
+      } else {
+        currentScore = data.Item.Score;
+
+        // player already exists
+        const updateParams = {
+          TableName: tableName,
+          Key: { UserId: m.author.id },
+          UpdateExpression: 'set Score = :s',
+          ExpressionAttributeValues: {
+            ':s': currentScore + valueChange
+          },
+          ReturnValues: 'UPDATED_NEW'
+        };
+        docClient.update(updateParams, function(err, data) {
+          if (err) {
+            console.error(
+              'Unable to update item. Error JSON:',
+              JSON.stringify(err, null, 2)
+            );
+          } else {
+            m.channel.send(
+              `That is ${correctness}, ${
+                m.author.username
+              }${excitement} Your score is now $${data.Attributes.Score}.`
+            );
+          }
+        });
+      }
+    }
+  });
 }
 
 module.exports = JeopardyCommand;
