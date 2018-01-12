@@ -15,14 +15,13 @@ class JeopardyCommand extends Command {
   async exec(message) {
     console.log(`Jeopardy game started by ${message.author.tag}`);
 
-    // grab the jeopardy question and parse
-    const url = 'http://www.jservice.io/api/random';
-    let res = JSON.parse((await get(url)).text);
-    if (res.error)
-      return message.reply(
-        `There was an error: ${res.error}. Status code: ${res.status}`
-      );
-    const { answer, question, value, category } = res[0];
+    let { answer, question, value, category } = await getQuestion();
+    // clean up html elements
+    answer = answer.replace(/<(?:.|\n)*?>/gm, '');
+    // clean up value
+    if (!value || value == 'null' || value.trim() == '') {
+      value = 200;
+    }
 
     const prompt = `The category is **${
       category.title
@@ -41,7 +40,7 @@ class JeopardyCommand extends Command {
       );
       collector.on('collect', m => {
         if (m == 'quit' || m == constants.prefix + 'quit') {
-          collector.stop(1);
+          collector.stop(0);
         } else if (
           // check whether the message is another call to jeopardy
           constants.jeopardyAliases.indexOf(
@@ -71,10 +70,10 @@ class JeopardyCommand extends Command {
       });
       collector.on('end', (m, reason) => {
         // 0: quit
-        // 1: timeout
+        // 1: timeout (not ever passed)
         // 2: start a new round before current one is over
         // 3: correct answer
-        if (reason == 1 || reason == 2) {
+        if (!(reason == 3)) {
           message.channel.send(
             `Time's up! The correct answer was **${answer}**.`
           );
@@ -88,6 +87,16 @@ class JeopardyCommand extends Command {
     console.log('Round finished!');
     return;
   }
+}
+
+async function getQuestion() {
+  // grab the jeopardy question and parse
+  const url = 'http://www.jservice.io/api/random';
+  let res = JSON.parse((await get(url)).text)[0];
+  if (!res.question || res.question == 'null' || res.question.trim() == '') {
+    res = getQuestion();
+  }
+  return res;
 }
 
 function isAnswerCorrect(message, answer) {
