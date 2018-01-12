@@ -19,7 +19,7 @@ class JeopardyCommand extends Command {
     // clean up html elements
     answer = answer.replace(/<(?:.|\n)*?>/gm, '');
     // clean up value
-    if (!value || value == 'null' || value.trim() == '') {
+    if (!value || value == null) {
       value = 200;
     }
 
