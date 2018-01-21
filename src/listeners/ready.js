@@ -13,6 +13,7 @@ module.exports = class Ready extends Listener {
         this.client.channels.size
       } channels, and ${this.client.users.size} users.`
     );
+    this.client.user.setGame(`${this.client.users.size} users`);
     setInterval(() => {
       this.client.user.setGame(`${this.client.users.size} users`);
     }, 600000);

@@ -206,7 +206,7 @@ function updatePlayerScore(m, valueChange) {
             m.channel.send(
               `That is ${correctness}, ${
                 m.author.username
-              }${excitement} Your score is now $${valueChange}.`
+              }${excitement} Your score is now $${valueChange.toLocaleString()}.`
             );
           }
         });
@@ -233,7 +233,7 @@ function updatePlayerScore(m, valueChange) {
             m.channel.send(
               `That is ${correctness}, ${
                 m.author.username
-              }${excitement} Your score is now $${data.Attributes.Score}.`
+              }${excitement} Your score is now $${data.Attributes.Score.toLocaleString()}.`
             );
           }
         });
