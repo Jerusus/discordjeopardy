@@ -153,8 +153,12 @@ function isAnswerCorrect(message, answer) {
     if (isAnswerCorrect(message, matches[1])) {
       return true;
     }
+    let exclude = answer.split(matches[0]);
+    if (isAnswerCorrect(message, exclude[0])) {
+      return true;
+    }
   }
-  
+
   if (similarity > constants.similarityThreshold) {
     return true;
   } else {
