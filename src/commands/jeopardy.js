@@ -207,7 +207,7 @@ function updatePlayerScore(m, valueChange) {
           TableName: tableName,
           Item: {
             UserId: m.author.id,
-            Score: valueChange
+            Score: Math.max(valueChange, 0)
           }
         };
         docClient.put(newParams, function(err, data) {
@@ -233,7 +233,7 @@ function updatePlayerScore(m, valueChange) {
           Key: { UserId: m.author.id },
           UpdateExpression: 'set Score = :s',
           ExpressionAttributeValues: {
-            ':s': currentScore + valueChange
+            ':s': Math.max(currentScore + valueChange, 0)
           },
           ReturnValues: 'UPDATED_NEW'
         };
