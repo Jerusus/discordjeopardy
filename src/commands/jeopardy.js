@@ -145,6 +145,16 @@ function isAnswerCorrect(message, answer) {
     text,
     answer.toLowerCase()
   );
+
+  // check if the user's submission matches the question's alternative answer (if any)
+  var parenthesesRegex = /\(([^)]+)\)/;
+  if (parenthesesRegex.test(answer)) {
+    var matches = parenthesesRegex.exec(answer);
+    if (isAnswerCorrect(message, matches[1])) {
+      return true;
+    }
+  }
+  
   if (similarity > constants.similarityThreshold) {
     return true;
   } else {
