@@ -143,18 +143,18 @@ function isAnswerCorrect(message, answer) {
     .toLowerCase();
   var similarity = stringSimilarity.compareTwoStrings(
     text,
-    answer.toLowerCase()
+    answer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
   );
 
   // check if the user's submission matches the question's alternative answer (if any)
   var parenthesesRegex = /\(([^)]+)\)/;
   if (parenthesesRegex.test(answer)) {
     var matches = parenthesesRegex.exec(answer);
-    if (isAnswerCorrect(message, matches[1])) {
+    if (isAnswerCorrect(text, matches[1])) {
       return true;
     }
     let exclude = answer.split(matches[0]);
-    if (isAnswerCorrect(message, exclude[0])) {
+    if (isAnswerCorrect(text, exclude[0])) {
       return true;
     }
   }
