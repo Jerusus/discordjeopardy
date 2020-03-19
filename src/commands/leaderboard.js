@@ -19,7 +19,6 @@ class LeaderboardCommand extends Command {
 
   exec(message) {
     if (!message.guild) return;
-    // message.channel.send("Here's the top scores of the server:");
     const guildMembers = message.guild.members.array();
     var scores = [];
     var batchReadParams = {
@@ -52,6 +51,20 @@ class LeaderboardCommand extends Command {
           scores.push(curScoreObject);
         }
         console.log(scores);
+        scores.sort((a, b) => {
+          b.score - a.score;
+        });
+        var msg = "Here's the top scores of the server:\n```\n";
+        msg += '+----------------------------------------------------+\n';
+        for (i = 0; i < 5 && i < scores.length; i++) {
+          var rank = i + 1;
+          msg += `| ${rank}. ${score[i].username.padEnd(34)}${(
+            '$' + score[i].score.toLocaleString()
+          ).padStart(13) + ' |\n'}`;
+        }
+        msg += '+----------------------------------------------------+\n';
+        msg += '```';
+        message.channel.send(msg);
       }
     });
   }

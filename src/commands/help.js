@@ -26,9 +26,9 @@ class HelpCommand extends Command {
     message.channel.send(
       `Use \`quit\` or \`${constants.prefix}quit\` to end the round.`
     );
-    // message.channel.send(
-    //   `See the leaderboard by typing ${leaderboardCommands.join('|')}.`
-    // );
+    message.channel.send(
+      `See the leaderboard by typing ${leaderboardCommands.join('|')}.`
+    );
     return;
   }
 }
