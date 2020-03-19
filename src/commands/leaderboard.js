@@ -25,13 +25,16 @@ class LeaderboardCommand extends Command {
     var scores = {};
     var promises = [];
     var batchReadParams = {
-      TableName: tableName,
-      Key: []
+      RequestItems: {
+        tableName: {
+          Key: []
+        }
+      }
     };
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
       if (user.username == 'JeopardyBot') continue;
-      batchReadParams.Key.push({ UserId: user.id });
+      batchReadParams.RequestItems.tableName.Key.push({ UserId: user.id });
     }
     docClient.batchGet(batchReadParams, function(err, data) {
       if (err) {
