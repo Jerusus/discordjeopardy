@@ -14,11 +14,6 @@ const client = new AkairoClient(
   }
 );
 
-client
-  .login(process.env.TOKEN)
-  .then(() => {
-    console.log('Logged in!');
-  })
-  .catch(err => {
-    console.log(err);
-  });
+client.login(process.env.TOKEN).then(() => {
+  console.log('Logged in!');
+});
