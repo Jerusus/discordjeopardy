@@ -8,17 +8,29 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+const recentGuild = new Set();
+
 class LeaderboardCommand extends Command {
   constructor() {
     super('leaderboard', {
       aliases: constants.leaderboardAliases,
-      channelRestriction: 'guild',
-      cooldown: constants.leaderboardCooldown
+      channelRestriction: 'guild'
     });
   }
 
   exec(message) {
     if (!message.guild) return;
+    if (recentGuild.has(message.guild.id)) {
+      message.channel.send(
+        'Leaderboard displayed too recently. Try again later...'
+      );
+      return;
+    } else {
+      recentGuild.add(message.guild.id);
+      setTimeout(() => {
+        recentGuild.delete(message.guild.id);
+      }, constants.leaderboardCooldown);
+    }
     const guildMembers = message.guild.members.array();
     var scores = [];
     var batchReadParams = {
