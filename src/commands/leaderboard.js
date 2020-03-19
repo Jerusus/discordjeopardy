@@ -66,7 +66,7 @@ class LeaderboardCommand extends Command {
         scores.sort((a, b) => {
           return b.score - a.score;
         });
-        var msg = "Here's the top scores of the server:\n```\n";
+        var msg = '**Here are the top scores on this server:**\n```\n';
         msg += '+----------------------------------------------------+\n';
         for (var i = 0; i < 5 && i < scores.length; i++) {
           var rank = i + 1;
