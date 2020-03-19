@@ -58,8 +58,8 @@ class LeaderboardCommand extends Command {
         msg += '+----------------------------------------------------+\n';
         for (var i = 0; i < 5 && i < scores.length; i++) {
           var rank = i + 1;
-          msg += `| ${rank}. ${score[i].username.padEnd(34)}${(
-            '$' + score[i].score.toLocaleString()
+          msg += `| ${rank}. ${scores[i].username.padEnd(34)}${(
+            '$' + scores[i].score.toLocaleString()
           ).padStart(13) + ' |\n'}`;
         }
         msg += '+----------------------------------------------------+\n';
