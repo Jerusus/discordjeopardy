@@ -2,7 +2,6 @@ const { Command } = require('discord-akairo');
 const constants = require('../constants');
 const AWS = require('aws-sdk');
 
-const tableName = 'PlayerData';
 AWS.config.update({
   region: 'us-west-2'
 });
@@ -26,7 +25,7 @@ class LeaderboardCommand extends Command {
     var promises = [];
     var batchReadParams = {
       RequestItems: {
-        [tableName]: {
+        PlayerData: {
           Keys: []
         }
       }
@@ -34,7 +33,7 @@ class LeaderboardCommand extends Command {
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
       if (user.username == 'JeopardyBot') continue;
-      batchReadParams.RequestItems.tableName.Keys.push({ UserId: user.id });
+      batchReadParams.RequestItems.PlayerData.Keys.push({ UserId: user.id });
     }
     console.log(batchReadParams);
     docClient.batchGet(batchReadParams, function(err, data) {
