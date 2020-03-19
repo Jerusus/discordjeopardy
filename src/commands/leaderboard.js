@@ -21,8 +21,7 @@ class LeaderboardCommand extends Command {
     if (!message.guild) return;
     // message.channel.send("Here's the top scores of the server:");
     const guildMembers = message.guild.members.array();
-    var scores = {};
-    var promises = [];
+    var scores = [];
     var batchReadParams = {
       RequestItems: {
         PlayerData: {
@@ -30,12 +29,13 @@ class LeaderboardCommand extends Command {
         }
       }
     };
+    var userMap = {};
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
       if (user.username == 'JeopardyBot') continue;
       batchReadParams.RequestItems.PlayerData.Keys.push({ UserId: user.id });
+      userMap[user.id] = user.username;
     }
-    console.log(batchReadParams);
     docClient.batchGet(batchReadParams, function(err, data) {
       if (err) {
         console.error(
@@ -43,16 +43,24 @@ class LeaderboardCommand extends Command {
           JSON.stringify(err, null, 2)
         );
       } else {
-        console.log(data.Responses);
-        // if (data.Item == undefined) return;
-        // console.log('Fetched score: ', data.Item.Score);
-        // scores[user.username] = data.Item.Score;
+        for (let response of data.Responses.PlayerData) {
+          var curScoreObject = new ScoreObject(
+            response.UserId,
+            userMap[response.UserId],
+            response.Score
+          );
+          scores.push(curScoreObject);
+        }
+        console.log(scores);
       }
     });
-    // Promise.all(promises).then(() => {
-    //   console.log(scores);
-    // });
   }
+}
+
+function ScoreObject(userId, username, score) {
+  this.userId = userId;
+  this.username = username;
+  this.score = score;
 }
 
 module.exports = LeaderboardCommand;
