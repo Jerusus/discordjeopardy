@@ -20,36 +20,31 @@ class LeaderboardCommand extends Command {
 
   exec(message) {
     if (!message.guild) return;
-    message.channel.send("Here's the top scores of the server:");
+    // message.channel.send("Here's the top scores of the server:");
     const guildMembers = message.guild.members.array();
     var scores = {};
     var promises = [];
+    var batchReadParams = {
+      TableName: tableName,
+      Key: []
+    };
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
-      console.log('User: ', user);
       if (user.username == 'JeopardyBot') continue;
-      const readParams = {
-        TableName: tableName,
-        Key: {
-          UserId: user.id
-        }
-      };
-      promises.push(
-        docClient
-          .get(readParams, function(err, data) {
-            if (err) {
-              console.error(
-                'Unable to read item. Error JSON:',
-                JSON.stringify(err, null, 2)
-              );
-            } else {
-              console.log('Fetched score: ', data.Item.Score);
-              scores[user.username] = data.Item.Score;
-            }
-          })
-          .promise()
-      );
+      batchReadParams.Key.push({ UserId: user.id });
     }
+    docClient.get(readParams, function(err, data) {
+      if (err) {
+        console.error(
+          'Unable to read item. Error JSON:',
+          JSON.stringify(err, null, 2)
+        );
+      } else {
+        if (data.Item == undefined) return;
+        console.log('Fetched score: ', data.Item.Score);
+        scores[user.username] = data.Item.Score;
+      }
+    });
     Promise.all(promises).then(() => {
       console.log(scores);
     });
