@@ -26,6 +26,7 @@ class LeaderboardCommand extends Command {
     var promises = [];
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
+      console.log('User: ', user);
       if (user.username == 'JeopardyBot') continue;
       const readParams = {
         TableName: tableName,
@@ -34,16 +35,19 @@ class LeaderboardCommand extends Command {
         }
       };
       promises.push(
-        docClient.get(readParams, function(err, data) {
-          if (err) {
-            console.error(
-              'Unable to read item. Error JSON:',
-              JSON.stringify(err, null, 2)
-            );
-          } else {
-            scores[user.username] = data.Item.Score;
-          }
-        })
+        docClient
+          .get(readParams, function(err, data) {
+            if (err) {
+              console.error(
+                'Unable to read item. Error JSON:',
+                JSON.stringify(err, null, 2)
+              );
+            } else {
+              console.log('Fetched score: ', data.Item.Score);
+              scores[user.username] = data.Item.Score;
+            }
+          })
+          .promise()
       );
     }
     Promise.all(promises).then(() => {
