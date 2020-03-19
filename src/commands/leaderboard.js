@@ -64,7 +64,7 @@ class LeaderboardCommand extends Command {
         }
         console.log(scores);
         scores.sort((a, b) => {
-          b.score - a.score;
+          return b.score - a.score;
         });
         var msg = "Here's the top scores of the server:\n```\n";
         msg += '+----------------------------------------------------+\n';
