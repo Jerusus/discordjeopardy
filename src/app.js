@@ -17,3 +17,7 @@ const client = new AkairoClient(
 client.login(process.env.TOKEN).then(() => {
   console.log('Logged in!');
 });
+
+setTimeout(() => {
+  client.ws.connection.triggerReady();
+}, 30000);
