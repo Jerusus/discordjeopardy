@@ -59,9 +59,7 @@ class JeopardyCommand extends Command {
       value = 200;
     }
 
-    const prompt = `The category is **${
-      category.title
-    }** for $${value}:\n\`\`\`${question}\`\`\``;
+    const prompt = `The category is **${category.title}** for $${value}:\n\`\`\`${question}\`\`\``;
     message.channel.send(prompt);
 
     // TODO get rid of this, you cheater
@@ -191,9 +189,7 @@ function updatePlayerScore(m, valueChange) {
   docClient.get(readParams, function(err, data) {
     if (err) {
       m.channel.send(
-        `That is ${correctness}, ${
-          m.author.username
-        }${excitement} Err: Database down.`
+        `That is ${correctness}, ${m.author.username}${excitement} Err: Database down.`
       );
       console.error(
         'Unable to read item. Error JSON:',
@@ -249,6 +245,7 @@ function updatePlayerScore(m, valueChange) {
                 m.author.username
               }${excitement} Your score is now $${data.Attributes.Score.toLocaleString()}.`
             );
+            console.log('Score:', data.Attributes.Score);
           }
         });
       }
