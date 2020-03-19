@@ -33,21 +33,22 @@ class LeaderboardCommand extends Command {
       if (user.username == 'JeopardyBot') continue;
       batchReadParams.Key.push({ UserId: user.id });
     }
-    docClient.get(readParams, function(err, data) {
+    docClient.batchGet(batchReadParams, function(err, data) {
       if (err) {
         console.error(
           'Unable to read item. Error JSON:',
           JSON.stringify(err, null, 2)
         );
       } else {
-        if (data.Item == undefined) return;
-        console.log('Fetched score: ', data.Item.Score);
-        scores[user.username] = data.Item.Score;
+        console.log(data.Responses);
+        // if (data.Item == undefined) return;
+        // console.log('Fetched score: ', data.Item.Score);
+        // scores[user.username] = data.Item.Score;
       }
     });
-    Promise.all(promises).then(() => {
-      console.log(scores);
-    });
+    // Promise.all(promises).then(() => {
+    //   console.log(scores);
+    // });
   }
 }
 
