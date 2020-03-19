@@ -56,7 +56,7 @@ class LeaderboardCommand extends Command {
         });
         var msg = "Here's the top scores of the server:\n```\n";
         msg += '+----------------------------------------------------+\n';
-        for (i = 0; i < 5 && i < scores.length; i++) {
+        for (var i = 0; i < 5 && i < scores.length; i++) {
           var rank = i + 1;
           msg += `| ${rank}. ${score[i].username.padEnd(34)}${(
             '$' + score[i].score.toLocaleString()
