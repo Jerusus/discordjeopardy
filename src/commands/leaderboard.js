@@ -50,4 +50,4 @@ class LeaderboardCommand extends Command {
   }
 }
 
-module.exports = HelpCommand;
+module.exports = LeaderboardCommand;
