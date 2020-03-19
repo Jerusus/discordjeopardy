@@ -19,12 +19,14 @@ class LeaderboardCommand extends Command {
   }
 
   exec(message) {
+    if (!message.guild) return;
     message.channel.send("Here's the top scores of the server:");
-    const users = message.guild.members.array();
-    console.log('Guild users:', users);
+    const guildMembers = message.guild.members.array();
     var scores = {};
     var promises = [];
-    for (let user of users) {
+    for (let guildMember of guildMembers) {
+      const user = guildMember.user;
+      if (user.username == 'JeopardyBot') continue;
       const readParams = {
         TableName: tableName,
         Key: {
@@ -39,7 +41,7 @@ class LeaderboardCommand extends Command {
               JSON.stringify(err, null, 2)
             );
           } else {
-            scores[user.id] = data.Item.Score;
+            scores[user.username] = data.Item.Score;
           }
         })
       );
