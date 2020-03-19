@@ -9,12 +9,16 @@ class HelpCommand extends Command {
   }
 
   exec(message) {
-    let commands = [];
+    let jeopardyCommands = [];
     for (let alias of constants.jeopardyAliases) {
-      commands.push('`' + constants.prefix + alias + '`');
+      jeopardyCommands.push('`' + constants.prefix + alias + '`');
+    }
+    let leaderboardCommands = [];
+    for (let alias of constants.leaderboardAliases) {
+      leaderboardCommands.push('`' + constants.prefix + alias + '`');
     }
     message.channel.send(
-      `Start a Jeopardy! round by using ${commands.join('|')}.`
+      `Start a Jeopardy! round by typing ${jeopardyCommands.join('|')}.`
     );
     message.channel.send(
       'Answers must be in the form of a question, e.g. "who is..." or "where are...".'
@@ -22,6 +26,9 @@ class HelpCommand extends Command {
     message.channel.send(
       `Use \`quit\` or \`${constants.prefix}quit\` to end the round.`
     );
+    // message.channel.send(
+    //   `See the leaderboard by typing ${leaderboardCommands.join('|')}.`
+    // );
     return;
   }
 }
