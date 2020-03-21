@@ -62,9 +62,6 @@ class JeopardyCommand extends Command {
     const prompt = `The category is **${category.title}** for $${value}:\n\`\`\`${question}\`\`\``;
     message.channel.send(prompt);
 
-    // TODO get rid of this, you cheater
-    console.log('Answer:', answer);
-
     const finish = await new Promise((resolve, reject) => {
       const collector = message.channel.createMessageCollector(
         m => m.author.username != 'JeopardyBot',
@@ -108,8 +105,6 @@ class JeopardyCommand extends Command {
       });
     });
 
-    // TODO logic depending on the value of 'finish', from resolve
-    console.log('Round finished!');
     return;
   }
 }
