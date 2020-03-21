@@ -43,7 +43,6 @@ class LeaderboardCommand extends Command {
     var userMap = {};
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
-      if (user.username == 'JeopardyBot') continue;
       batchReadParams.RequestItems.PlayerData.Keys.push({ UserId: user.id });
       userMap[user.id] = user.username;
     }
@@ -55,6 +54,7 @@ class LeaderboardCommand extends Command {
         );
       } else {
         for (let response of data.Responses.PlayerData) {
+          if (response.Score == 0) continue;
           var curScoreObject = new ScoreObject(
             response.UserId,
             userMap[response.UserId],
