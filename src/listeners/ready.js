@@ -11,10 +11,9 @@ module.exports = class Ready extends Listener {
     console.log(
       `DiscordJeopardy started. ${this.client.guilds.size} guilds, ${this.client.channels.size} channels, and ${this.client.users.size} users.`
     );
-    // this.client.user.setGame(`${this.client.users.size} users`);
-    // setInterval(() => {
-    //   this.client.user.setGame(`${this.client.users.size} users`);
-    // }, 600000);
-    this.client.user.setActivity(`NEW leaderboard! Type "t.top"`);
+    this.client.user.setGame(`${this.client.users.size} users`);
+    setInterval(() => {
+      this.client.user.setGame(`${this.client.users.size} users`);
+    }, 600000);
   }
 };
