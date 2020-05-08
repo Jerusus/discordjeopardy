@@ -41,10 +41,13 @@ class LeaderboardCommand extends Command {
       }
     };
     var userMap = {};
+    var i = 0;
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
       batchReadParams.RequestItems.PlayerData.Keys.push({ UserId: user.id });
       userMap[user.id] = user.username;
+      i++;
+      if (i > 120) break;
     }
     docClient.batchGet(batchReadParams, function(err, data) {
       if (err) {
