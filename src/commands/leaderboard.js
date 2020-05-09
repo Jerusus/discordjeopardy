@@ -40,6 +40,7 @@ class LeaderboardCommand extends Command {
           );
         } else {
           cacheFresh = true;
+          dbCache = data;
           setTimeout(() => {
             cacheFresh = false;
           }, constants.leaderboardCooldown);
