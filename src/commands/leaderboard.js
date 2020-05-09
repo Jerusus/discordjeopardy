@@ -48,6 +48,7 @@ class LeaderboardCommand extends Command {
           JSON.stringify(err, null, 2)
         );
       } else {
+        console.log(data);
         for (let item of data.Items.PlayerData) {
           if (!(item.UserId in userMap)) {
             continue;
