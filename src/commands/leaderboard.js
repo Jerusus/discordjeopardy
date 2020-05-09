@@ -48,14 +48,14 @@ class LeaderboardCommand extends Command {
           JSON.stringify(err, null, 2)
         );
       } else {
-        for (let response of data.Responses.PlayerData) {
-          if (!(response.UserId in userMap)) {
+        for (let item of data.Items.PlayerData) {
+          if (!(item.UserId in userMap)) {
             continue;
           }
           var curScoreObject = new ScoreObject(
-            response.UserId,
-            userMap[response.UserId],
-            response.Score
+            item.UserId,
+            userMap[item.UserId],
+            item.Score
           );
           scores.push(curScoreObject);
         }
