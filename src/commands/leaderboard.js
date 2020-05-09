@@ -55,7 +55,7 @@ class LeaderboardCommand extends Command {
   }
 }
 
-function displayScore(dbData, userMap, message) {
+function displayScore(data, userMap, message) {
   for (let item of data.Items) {
     if (!(item.UserId in userMap)) {
       continue;
