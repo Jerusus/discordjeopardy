@@ -33,20 +33,15 @@ class LeaderboardCommand extends Command {
     }
     const guildMembers = message.guild.members.array();
     var scores = [];
-    var batchReadParams = {
-      RequestItems: {
-        PlayerData: {
-          Keys: []
-        }
-      }
-    };
     var userMap = {};
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
-      batchReadParams.RequestItems.PlayerData.Keys.push({ UserId: user.id });
       userMap[user.id] = user.username;
     }
-    docClient.batchGet(batchReadParams, function(err, data) {
+    var scanParams = {
+      TableName: 'PlayerData'
+    };
+    docClient.scan(scanParams, function(err, data) {
       if (err) {
         console.error(
           'Unable to read item. Error JSON:',
@@ -54,7 +49,9 @@ class LeaderboardCommand extends Command {
         );
       } else {
         for (let response of data.Responses.PlayerData) {
-          if (response.Score == 0) continue;
+          if (!(response.UserId in userMap)) {
+            continue;
+          }
           var curScoreObject = new ScoreObject(
             response.UserId,
             userMap[response.UserId],
