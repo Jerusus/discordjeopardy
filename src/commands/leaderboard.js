@@ -22,7 +22,6 @@ class LeaderboardCommand extends Command {
   exec(message) {
     if (!message.guild) return;
     const guildMembers = message.guild.members.array();
-    var scores = [];
     var userMap = {};
     for (let guildMember of guildMembers) {
       const user = guildMember.user;
@@ -45,17 +44,18 @@ class LeaderboardCommand extends Command {
             cacheFresh = false;
           }, constants.leaderboardCooldown);
 
-          displayScore(data, userMap, message);
+          displayLeaderboard(data, userMap, message);
         }
       });
     } else {
       console.log('Using db cache...');
-      displayScore(dbCache, userMap, message);
+      displayLeaderboard(dbCache, userMap, message);
     }
   }
 }
 
-function displayScore(data, userMap, message) {
+function displayLeaderboard(data, userMap, message) {
+  var scores = [];
   for (let item of data.Items) {
     if (!(item.UserId in userMap)) {
       continue;
