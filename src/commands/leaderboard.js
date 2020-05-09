@@ -49,7 +49,7 @@ class LeaderboardCommand extends Command {
         );
       } else {
         console.log(data);
-        for (let item of data.Items.PlayerData) {
+        for (let item of data.Items) {
           if (!(item.UserId in userMap)) {
             continue;
           }
