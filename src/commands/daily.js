@@ -1,7 +1,7 @@
 const { Command } = require('discord-akairo');
 const constants = require('../constants');
 const AWS = require('aws-sdk');
-const { dbl } = require('../app.js');
+const { dbl } = require('../app');
 
 AWS.config.update({
   region: 'us-west-2',
