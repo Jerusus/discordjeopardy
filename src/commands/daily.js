@@ -9,6 +9,8 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+// const dbl = new DBL(process.env.TOPGG_TOKEN, this.client);
+
 class DailyCommand extends Command {
   constructor() {
     super('daily', {
@@ -19,9 +21,6 @@ class DailyCommand extends Command {
 
   exec(message) {
     console.log('Daily...');
-    dbl.getBot('400786664861204481').then((bot) => {
-      console.log(bot.username);
-    });
   }
 }
 
