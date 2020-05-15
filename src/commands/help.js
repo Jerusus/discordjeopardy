@@ -29,7 +29,7 @@ See the leaderboard by typing ${leaderboardCommands.join('|')}.
 Vote daily by typing ${dailyCommands.join(
         '|'
       )} to earn $1,000 towards your score.
-To invite this bot to your server, visit this link: https://top.gg/bot/400786664861204481`
+To invite this bot to your server, visit this link: <https://top.gg/bot/400786664861204481>`
     );
   }
 }
