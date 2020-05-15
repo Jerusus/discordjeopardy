@@ -13,8 +13,8 @@ module.exports = class Ready extends Listener {
     );
     let flag = 0;
     let notices = [
-      `NEW! Daily vote bonus! "t.help" for details`,
-      // `"t.help" for commands`,
+      // `NEW! Daily vote bonus! "t.help" for details`,
+      `"t.help" for commands`,
       `${this.client.users.size.toLocaleString()} users`,
     ];
     this.client.user.setGame(notices[0]);
