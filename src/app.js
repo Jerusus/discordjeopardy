@@ -3,6 +3,7 @@ const { AkairoClient } = require('discord-akairo');
 const DBL = require('dblapi.js');
 const constants = require('./constants');
 const AWS = require('aws-sdk');
+require('newrelic');
 
 const tableName = 'PlayerData';
 AWS.config.update({
