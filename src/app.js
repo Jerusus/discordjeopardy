@@ -1,4 +1,3 @@
-require('newrelic');
 const Discord = require('discord.js');
 const { AkairoClient } = require('discord-akairo');
 const DBL = require('dblapi.js');
