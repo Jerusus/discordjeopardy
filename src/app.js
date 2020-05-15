@@ -20,7 +20,7 @@ client.login(process.env.TOKEN).then(() => {
 });
 
 const dbl = new DBL(process.env.TOPGG_TOKEN, client);
-// Optional events
+
 dbl.on('posted', () => {
   console.log('Server count posted!');
 });
@@ -33,4 +33,4 @@ setTimeout(() => {
   client.ws.connection.triggerReady();
 }, 30000);
 
-module.exports = { dbl };
+module.exports = { dbl: dbl };
