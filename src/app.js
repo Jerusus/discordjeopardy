@@ -2,16 +2,6 @@ const Discord = require('discord.js');
 const { AkairoClient } = require('discord-akairo');
 const DBL = require('dblapi.js');
 const constants = require('./constants');
-const express = require('express');
-const http = require('http');
-
-const app = express();
-const server = http.createServer(app);
-
-app.get('/', (req, res) => {
-  console.log(req);
-  console.log(res);
-});
 
 const client = new AkairoClient(
   {
