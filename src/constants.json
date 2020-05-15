@@ -4,6 +4,6 @@
   "leaderboardAliases": ["leaderboard", "leader", "top", "l"],
   "roundTime": 60000,
   "jeopardyCooldown": 2000,
-  "leaderboardCooldown": 300000,
+  "leaderboardCooldown": 600000,
   "similarityThreshold": 0.65
 }
