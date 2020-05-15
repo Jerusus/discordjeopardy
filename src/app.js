@@ -4,10 +4,17 @@ const DBL = require('dblapi.js');
 const constants = require('./constants');
 const AWS = require('aws-sdk');
 const express = require('express');
+const http = require('http');
 
 const app = express();
+const server = http.createServer(app);
+
 app.get('/', (req, res) => {
   res.send('ping');
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`Listening on ${process.env.PORT}`);
 });
 
 const tableName = 'PlayerData';
@@ -35,7 +42,7 @@ client.login(process.env.TOKEN).then(() => {
 
 const dbl = new DBL(
   process.env.TOPGG_TOKEN,
-  { webhookPort: process.env.PORT, webhookAuth: process.env.TOPGG_WEBHOOKAUTH },
+  { webhookServer: server, webhookAuth: process.env.TOPGG_WEBHOOKAUTH },
   client
 );
 
