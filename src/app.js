@@ -5,6 +5,7 @@ const constants = require('./constants');
 const AWS = require('aws-sdk');
 const express = require('express');
 const http = require('http');
+const { get } = require('snekfetch');
 
 const app = express();
 const server = http.createServer(app);
@@ -70,6 +71,11 @@ dbl.webhook.on('vote', (vote) => {
     }
   });
 });
+
+// ping self to avoid heroku idling
+setInterval(() => {
+  get(process.env.HOST).then((r) => console.log(`Self ping: ${r}`));
+}, 30000);
 
 setTimeout(() => {
   client.ws.connection.triggerReady();
