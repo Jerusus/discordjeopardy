@@ -29,11 +29,11 @@ dbl.on('error', (e) => {
   console.log(`Oops! ${e}`);
 });
 
-dbl.webhook.on('ready', (hook) => {
-  console.log(
-    `Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`
-  );
-});
+// dbl.webhook.on('ready', (hook) => {
+//   console.log(
+//     `Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`
+//   );
+// });
 
 setTimeout(() => {
   client.ws.connection.triggerReady();
