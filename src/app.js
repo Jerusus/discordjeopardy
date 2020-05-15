@@ -74,8 +74,8 @@ dbl.webhook.on('vote', (vote) => {
 
 // ping self to avoid heroku idling
 setInterval(() => {
-  get(process.env.HOST).then((r) => console.log(`Self ping: ${r}`));
-}, 30000);
+  get(process.env.HOST).then((r) => console.log(`Self ping`));
+}, 300000);
 
 setTimeout(() => {
   client.ws.connection.triggerReady();

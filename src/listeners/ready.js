@@ -13,7 +13,7 @@ module.exports = class Ready extends Listener {
     );
     let flag = 0;
     let notices = [
-      // `NEW! Daily vote bonus! "t.help" for details`,
+      `NEW! Daily vote bonus! "t.help" for details`,
       `"t.help" for commands`,
       `${this.client.users.size.toLocaleString()} users`,
     ];
