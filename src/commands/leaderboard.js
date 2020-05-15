@@ -3,7 +3,7 @@ const constants = require('../constants');
 const AWS = require('aws-sdk');
 
 AWS.config.update({
-  region: 'us-west-2'
+  region: 'us-west-2',
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
@@ -15,12 +15,11 @@ class LeaderboardCommand extends Command {
   constructor() {
     super('leaderboard', {
       aliases: constants.leaderboardAliases,
-      channelRestriction: 'guild'
+      channelRestriction: 'guild',
     });
   }
 
   exec(message) {
-    if (!message.guild) return;
     const guildMembers = message.guild.members.array();
     var userMap = {};
     for (let guildMember of guildMembers) {
@@ -28,11 +27,11 @@ class LeaderboardCommand extends Command {
       userMap[user.id] = user.username;
     }
     var scanParams = {
-      TableName: 'PlayerData'
+      TableName: 'PlayerData',
     };
     if (!cacheFresh) {
       console.log('Scanning db...');
-      docClient.scan(scanParams, function(err, data) {
+      docClient.scan(scanParams, function (err, data) {
         if (err) {
           console.error(
             'Unable to read item. Error JSON:',
@@ -76,9 +75,9 @@ function displayLeaderboard(data, userMap, message) {
   msg += '+----------------------------------------------------+\n';
   for (var i = 0; i < 5 && i < scores.length; i++) {
     var rank = i + 1;
-    msg += `| ${rank}. ${scores[i].username.padEnd(34)}${(
-      '$' + scores[i].score.toLocaleString()
-    ).padStart(13) + ' |\n'}`;
+    msg += `| ${rank}. ${scores[i].username.padEnd(34)}${
+      ('$' + scores[i].score.toLocaleString()).padStart(13) + ' |\n'
+    }`;
   }
   msg += '+----------------------------------------------------+\n';
   msg += '```';

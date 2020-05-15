@@ -8,43 +8,17 @@ const AWS = require('aws-sdk');
 // set up persistence for scores
 const tableName = 'PlayerData';
 AWS.config.update({
-  region: 'us-west-2'
+  region: 'us-west-2',
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
-
-// console.log('Importing player data into DynamoDB...');
-// const players = JSON.parse(fs.readFileSync('./data/playerdata.json', 'utf8'));
-// players.forEach(function(player) {
-//   var params = {
-//     TableName: tableName,
-//     Item: {
-//       UserId: player.UserId,
-//       Score: player.Score
-//     }
-//   };
-
-//   docClient.put(params, function(err, data) {
-//     if (err) {
-//       console.error(
-//         'Unable to add entry',
-//         player.UserId,
-//         '. Error JSON:',
-//         JSON.stringify(err, null, 2)
-//       );
-//     } else {
-//       console.log('PutItem succeeded:', player.UserId);
-//     }
-//   });
-// });
-// console.log('Done importing!');
 
 class JeopardyCommand extends Command {
   constructor() {
     super('jeopardy', {
       aliases: constants.jeopardyAliases,
       channelRestriction: 'guild',
-      cooldown: constants.jeopardyCooldown
+      cooldown: constants.jeopardyCooldown,
     });
   }
 
@@ -64,12 +38,12 @@ class JeopardyCommand extends Command {
 
     const finish = await new Promise((resolve, reject) => {
       const collector = message.channel.createMessageCollector(
-        m => m.author.username != 'JeopardyBot',
+        (m) => m.author.username != 'JeopardyBot',
         {
-          time: constants.roundTime
+          time: constants.roundTime,
         }
       );
-      collector.on('collect', m => {
+      collector.on('collect', (m) => {
         if (m == 'quit' || m == constants.prefix + 'quit') {
           collector.stop('quit');
         } else if (
@@ -177,11 +151,11 @@ function updatePlayerScore(m, valueChange) {
   const readParams = {
     TableName: tableName,
     Key: {
-      UserId: m.author.id
-    }
+      UserId: m.author.id,
+    },
   };
 
-  docClient.get(readParams, function(err, data) {
+  docClient.get(readParams, function (err, data) {
     if (err) {
       m.channel.send(
         `That is ${correctness}, ${m.author.username}${excitement} Err: Database down.`
@@ -198,10 +172,10 @@ function updatePlayerScore(m, valueChange) {
           TableName: tableName,
           Item: {
             UserId: m.author.id,
-            Score: Math.max(valueChange, 0)
-          }
+            Score: Math.max(valueChange, 0),
+          },
         };
-        docClient.put(newParams, function(err, data) {
+        docClient.put(newParams, function (err, data) {
           if (err) {
             console.error(
               'Unable to add item. Error JSON:',
@@ -224,11 +198,11 @@ function updatePlayerScore(m, valueChange) {
           Key: { UserId: m.author.id },
           UpdateExpression: 'set Score = :s',
           ExpressionAttributeValues: {
-            ':s': Math.max(currentScore + valueChange, 0)
+            ':s': Math.max(currentScore + valueChange, 0),
           },
-          ReturnValues: 'UPDATED_NEW'
+          ReturnValues: 'UPDATED_NEW',
         };
-        docClient.update(updateParams, function(err, data) {
+        docClient.update(updateParams, function (err, data) {
           if (err) {
             console.error(
               'Unable to update item. Error JSON:',
