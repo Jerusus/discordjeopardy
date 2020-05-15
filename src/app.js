@@ -49,6 +49,10 @@ dbl.webhook.on('ready', (hook) => {
   );
 });
 
+dbl.webhook.on('vote', (vote) => {
+  console.log(`User with ID ${vote.user} just voted!`);
+});
+
 setTimeout(() => {
   client.ws.connection.triggerReady();
 }, 30000);
