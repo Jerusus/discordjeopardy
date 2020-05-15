@@ -3,7 +3,6 @@ const { get } = require('snekfetch');
 const stringSimilarity = require('string-similarity');
 const constants = require('../constants');
 const AWS = require('aws-sdk');
-// const fs = require('fs');
 
 // set up persistence for scores
 const tableName = 'PlayerData';
