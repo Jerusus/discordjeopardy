@@ -23,7 +23,7 @@ Answers must be in the form of a question, e.g. "who is..." or "where are...".
 Use \`quit\` or \`${constants.prefix}quit\` to end the round.
 See the leaderboard by typing ${leaderboardCommands.join('|')}.
 To invite this bot to your server, or to vote, visit this link: https://top.gg/bot/400786664861204481
-Vote daily to earn $1,000 towards your score. Double on weekends!`
+Vote daily through the link above to earn $1,000 towards your score. Double on weekends!`
     );
   }
 }
