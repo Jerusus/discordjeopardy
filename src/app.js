@@ -32,3 +32,5 @@ dbl.on('error', (e) => {
 setTimeout(() => {
   client.ws.connection.triggerReady();
 }, 30000);
+
+module.exports = { dbl };

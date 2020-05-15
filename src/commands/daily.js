@@ -1,6 +1,7 @@
 const { Command } = require('discord-akairo');
 const constants = require('../constants');
 const AWS = require('aws-sdk');
+const { dbl } = require('../app.js');
 
 AWS.config.update({
   region: 'us-west-2',
@@ -17,8 +18,8 @@ class DailyCommand extends Command {
   }
 
   exec(message) {
-    console.log(message);
-    this.dbl.getBot('400786664861204481').then((bot) => {
+    console.log('Daily...');
+    dbl.getBot('400786664861204481').then((bot) => {
       console.log(bot.username);
     });
   }
