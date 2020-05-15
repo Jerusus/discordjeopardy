@@ -17,13 +17,19 @@ class HelpCommand extends Command {
     for (let alias of constants.leaderboardAliases) {
       leaderboardCommands.push('`' + constants.prefix + alias + '`');
     }
+    let dailyCommands = [];
+    for (let alias of constants.dailyAliases) {
+      dailyCommands.push('`' + constants.prefix + alias + '`');
+    }
     message.channel.send(
       `Start a Jeopardy! round by typing ${jeopardyCommands.join('|')}.
 Answers must be in the form of a question, e.g. "who is..." or "where are...".
 Use \`quit\` or \`${constants.prefix}quit\` to end the round.
 See the leaderboard by typing ${leaderboardCommands.join('|')}.
-To invite this bot to your server, or to vote, visit this link: https://top.gg/bot/400786664861204481
-Vote daily through the link above to earn $1,000 towards your score. Double on weekends!`
+Vote daily by typing ${dailyCommands.join(
+        '|'
+      )} to earn $1,000 towards your score.
+To invite this bot to your server, visit this link: https://top.gg/bot/400786664861204481`
     );
   }
 }
