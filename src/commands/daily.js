@@ -9,8 +9,6 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-const dbl = new DBL(process.env.TOPGG_TOKEN, client);
-
 class DailyCommand extends Command {
   constructor() {
     super('daily', {
