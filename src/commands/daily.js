@@ -5,7 +5,6 @@ class DailyCommand extends Command {
   constructor() {
     super('daily', {
       aliases: constants.dailyAliases,
-      channelRestriction: 'guild',
     });
   }
 
