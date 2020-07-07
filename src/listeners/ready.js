@@ -13,9 +13,10 @@ module.exports = class Ready extends Listener {
     );
     let flag = 0;
     let notices = [
-      `"t.daily" for daily vote bonus`,
-      `"t.help" for commands`,
-      `${this.client.users.size.toLocaleString()} users`,
+      `NEW Official Discord: https://discord.gg/ArvJrW`,
+      // `"t.daily" for daily vote bonus`,
+      // `"t.help" for commands`,
+      // `${this.client.users.size.toLocaleString()} users`,
     ];
     this.client.user.setGame(notices[0]);
     setInterval(() => {
