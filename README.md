@@ -1,6 +1,8 @@
 # discordjeopardy
 
-A Jeopardy! bot for Discord
+A Jeopardy! bot for Discord.
+
+**Join the [Discord Jeopardy!](https://discord.gg/ArvJrW) official server to play with others!**
 
 ![](https://i.imgur.com/QTts4bu.jpg)
 
