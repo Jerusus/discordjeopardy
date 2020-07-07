@@ -24,6 +24,8 @@ class JeopardyCommand extends Command {
   async exec(message) {
     console.log(`Jeopardy game started by ${message.author.tag}`);
 
+    let startTime = Date.now();
+
     let { answer, question, value, category } = await getQuestion();
     // clean up html elements
     answer = answer.replace(/<(?:.|\n)*?>/gm, '');
@@ -52,7 +54,14 @@ class JeopardyCommand extends Command {
           ) > -1
         ) {
           // trying to start a new round
-          collector.stop('restart');
+          // allow if this message is from the same person who originally started the round, or if enough time has elapsed
+          let elapsedTime = Date.now() - startTime;
+          if (
+            m.author.id === message.author.id ||
+            elapsedTime > constants.jeopardyMultiplayerCooldown
+          ) {
+            collector.stop('restart');
+          }
         } else if (isQuestionFormat(m)) {
           if (isAnswerCorrect(m, answer)) {
             updatePlayerScore(m, value);
