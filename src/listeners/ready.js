@@ -13,7 +13,7 @@ module.exports = class Ready extends Listener {
     );
     let flag = 0;
     let notices = [
-      `NEW Official Discord: https://discord.gg/ArvJrW`,
+      `NEW Official Discord: https://discord.gg/zMmvVq5`,
       // `"t.daily" for daily vote bonus`,
       // `"t.help" for commands`,
       // `${this.client.users.size.toLocaleString()} users`,
