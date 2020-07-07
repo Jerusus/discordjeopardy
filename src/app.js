@@ -77,6 +77,16 @@ setInterval(() => {
   get(process.env.HOST).then((r) => console.log(`Self ping`));
 }, 300000);
 
+// garbage collect to prevent heroku memory limit errors
+setInterval(() => {
+  if (!global.gc) {
+    console.log('Garbage collection is not exposed');
+  } else {
+    global.gc();
+    console.log('Manual garbage collection', process.memoryUsage());
+  }
+}, 900000);
+
 setTimeout(() => {
   client.ws.connection.triggerReady();
 }, 30000);
