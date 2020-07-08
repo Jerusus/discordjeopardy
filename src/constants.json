@@ -5,7 +5,7 @@
   "leaderboardAliases": ["leaderboard", "leader", "top", "l"],
   "dailyAliases": ["daily", "d"],
   "roundTime": 60000,
-  "autoRoundTime": 120000,
+  "autoRoundTime": 60000,
   "jeopardyCooldown": 2000,
   "jeopardyAutoCooldown": 2000,
   "leaderboardCooldown": 600000,
