@@ -13,6 +13,10 @@ class HelpCommand extends Command {
     for (let alias of constants.jeopardyAliases) {
       jeopardyCommands.push('`' + constants.prefix + alias + '`');
     }
+    let jeopardyAutoCommands = [];
+    for (let alias of constants.jeopardyAutoAliases) {
+      jeopardyAutoCommands.push('`' + constants.prefix + alias + '`');
+    }
     let leaderboardCommands = [];
     for (let alias of constants.leaderboardAliases) {
       leaderboardCommands.push('`' + constants.prefix + alias + '`');
@@ -23,6 +27,9 @@ class HelpCommand extends Command {
     }
     message.channel.send(
       `Start a Jeopardy! round by typing ${jeopardyCommands.join('|')}.
+Turn on endless jeopardy for your channel by typing ${jeopardyAutoCommands.join(
+        '|'
+      )}.
 Answers must be in the form of a question, e.g. "who is..." or "where are...".
 Use \`quit\` or \`${constants.prefix}quit\` to end the round.
 See the leaderboard by typing ${leaderboardCommands.join('|')}.

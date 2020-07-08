@@ -1,11 +1,13 @@
 {
   "prefix": "t.",
   "jeopardyAliases": ["jeopardy", "quiz", "trivia", "q"],
+  "jeopardyAutoAliases": ["auto"],
   "leaderboardAliases": ["leaderboard", "leader", "top", "l"],
   "dailyAliases": ["daily", "d"],
   "roundTime": 60000,
+  "autoRoundTime": 120000,
   "jeopardyCooldown": 2000,
-  "jeopardyMultiplayerCooldown": 10000,
+  "jeopardyAutoCooldown": 2000,
   "leaderboardCooldown": 600000,
   "similarityThreshold": 0.6
 }

@@ -3,9 +3,18 @@ const constants = require('../constants');
 const AWS = require('aws-sdk');
 const stringSimilarity = require('string-similarity');
 
+const channelState = {};
 const questionWordRegex = /^(what is|what are|whats|what's|where is|where are|wheres|where's|who is|who are|whos|who's|when is|when are|whens|when's|why is|why are|whys|why's) /i;
 
-async function startJeopardyInChannel(channel) {
+function getChannelState(channelId) {
+  return channelState[channelId];
+}
+
+function setChannelState(channelId, val) {
+  channelState[channelId] = val;
+}
+
+async function startJeopardyOnDemand(channel) {
   let { answer, question, value, category } = await getQuestion();
   // clean up html elements
   answer = answer.replace(/<(?:.|\n)*?>/gm, '');
@@ -60,6 +69,64 @@ async function startJeopardyInChannel(channel) {
       return resolve(reason);
     });
   });
+
+  return false;
+}
+
+async function startJeopardyAuto(channel) {
+  let { answer, question, value, category } = await getQuestion();
+  // clean up html elements
+  answer = answer.replace(/<(?:.|\n)*?>/gm, '');
+  // clean up value
+  if (!value || value == null) {
+    value = 200;
+  }
+
+  const prompt = `The category is **${category.title}** for $${value}:\n\`\`\`${question}\`\`\``;
+  channel.send(prompt);
+
+  const finish = await new Promise((resolve, reject) => {
+    const collector = channel.createMessageCollector(
+      (m) => m.author.username != 'JeopardyBot',
+      {
+        time: constants.autoRoundTime,
+      }
+    );
+    collector.on('collect', (m) => {
+      if (
+        m.toString().toLowerCase() === 'quit' ||
+        m.toString().toLowerCase() === constants.prefix + 'quit'
+      ) {
+        collector.stop('quit');
+      } else if (isQuestionFormat(m)) {
+        if (isAnswerCorrect(m, answer)) {
+          updatePlayerScore(m, value);
+          collector.stop('correct');
+        } else {
+          updatePlayerScore(m, 0 - value);
+        }
+      }
+    });
+    collector.on('end', (m, reason) => {
+      // time: timeout
+      // correct: correct answer
+      if (!(reason == 'correct')) {
+        channel.send(`Time's up! The correct answer was **${answer}**.`);
+      } else {
+        channel.send(`The correct answer was **${answer}**.`);
+      }
+      return resolve(reason);
+    });
+  });
+
+  if (finish !== 'quit') {
+    setTimeout(() => {
+      startJeopardyAuto(channel);
+    }, constants.jeopardyAutoCooldown);
+  } else {
+    channel.send('**--ENDLESS JEOPARDY OFF--**');
+    return false;
+  }
 }
 
 async function getQuestion() {
@@ -203,4 +270,9 @@ function updatePlayerScore(m, valueChange) {
   });
 }
 
-module.exports = { startJeopardyInChannel };
+module.exports = {
+  getChannelState,
+  setChannelState,
+  startJeopardyOnDemand,
+  startJeopardyAuto,
+};
