@@ -43,7 +43,10 @@ class JeopardyCommand extends Command {
         }
       );
       collector.on('collect', (m) => {
-        if (m == 'quit' || m == constants.prefix + 'quit') {
+        if (
+          m.toString().toLowerCase() === 'quit' ||
+          m.toString().toLowerCase() === constants.prefix + 'quit'
+        ) {
           collector.stop('quit');
         } else if (
           // check whether the message is another call to jeopardy
