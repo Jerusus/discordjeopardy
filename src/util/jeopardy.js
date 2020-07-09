@@ -15,6 +15,8 @@ function setChannelState(channelId, val) {
 }
 
 async function startJeopardyOnDemand(channel) {
+  setChannelState(channel.id, true);
+
   let { answer, question, value, category } = await getQuestion();
   // clean up html elements
   answer = answer.replace(/<(?:.|\n)*?>/gm, '');
@@ -66,14 +68,15 @@ async function startJeopardyOnDemand(channel) {
       } else {
         channel.send(`The correct answer was **${answer}**.`);
       }
+      setChannelState(channel.id, false);
       return resolve(reason);
     });
   });
-
-  return false;
 }
 
 async function startJeopardyAuto(channel) {
+  setChannelState(channel.id, true);
+
   let { answer, question, value, category } = await getQuestion();
   // clean up html elements
   answer = answer.replace(/<(?:.|\n)*?>/gm, '');
@@ -125,7 +128,7 @@ async function startJeopardyAuto(channel) {
     }, constants.jeopardyAutoCooldown);
   } else {
     channel.send('**--ENDLESS JEOPARDY OFF--**');
-    return false;
+    setChannelState(channel.id, false);
   }
 }
 
