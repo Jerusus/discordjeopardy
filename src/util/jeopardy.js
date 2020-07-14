@@ -188,7 +188,6 @@ function isAnswerCorrect(message, answer) {
 }
 
 // set up persistence for scores
-const tableName = 'PlayerData';
 AWS.config.update({
   region: 'us-west-2',
 });
@@ -200,7 +199,7 @@ function updatePlayerScore(m, valueChange) {
   const excitement = valueChange > 0 ? '!' : '.';
 
   const readParams = {
-    TableName: tableName,
+    TableName: constants.playerTable,
     Key: {
       UserId: m.author.id,
     },
@@ -220,7 +219,7 @@ function updatePlayerScore(m, valueChange) {
         // player doesn't exist in the db
         console.log('New player!', m.author.id);
         const newParams = {
-          TableName: tableName,
+          TableName: constants.playerTable,
           Item: {
             UserId: m.author.id,
             Score: Math.max(valueChange, 0),
@@ -245,7 +244,7 @@ function updatePlayerScore(m, valueChange) {
 
         // player already exists
         const updateParams = {
-          TableName: tableName,
+          TableName: constants.playerTable,
           Key: { UserId: m.author.id },
           UpdateExpression: 'set Score = :s',
           ExpressionAttributeValues: {

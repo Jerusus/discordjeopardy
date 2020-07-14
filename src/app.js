@@ -18,7 +18,6 @@ server.listen(process.env.PORT, () => {
   console.log(`Listening on ${process.env.PORT}`);
 });
 
-const tableName = 'PlayerData';
 AWS.config.update({
   region: 'us-west-2',
 });
@@ -95,7 +94,7 @@ function grantVoteBonus(userId, multiplier) {
   var points = 1000 * multiplier;
 
   const readParams = {
-    TableName: tableName,
+    TableName: constants.playerTable,
     Key: {
       UserId: userId,
     },
@@ -112,7 +111,7 @@ function grantVoteBonus(userId, multiplier) {
         // player doesn't exist in the db
         console.log('New player!', userId);
         const newParams = {
-          TableName: tableName,
+          TableName: constants.playerTable,
           Item: {
             UserId: userId,
             Score: points,
@@ -137,7 +136,7 @@ function grantVoteBonus(userId, multiplier) {
 
         // player already exists
         const updateParams = {
-          TableName: tableName,
+          TableName: constants.playerTable,
           Key: { UserId: userId },
           UpdateExpression: 'set Score = :s',
           ExpressionAttributeValues: {

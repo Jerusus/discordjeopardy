@@ -27,7 +27,7 @@ class LeaderboardCommand extends Command {
       userMap[user.id] = user.username;
     }
     var scanParams = {
-      TableName: 'PlayerData',
+      TableName: constants.playerTable,
     };
     if (!cacheFresh) {
       console.log('Scanning db...');

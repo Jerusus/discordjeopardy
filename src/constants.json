@@ -9,5 +9,6 @@
   "jeopardyCooldown": 2000,
   "jeopardyAutoCooldown": 2000,
   "leaderboardCooldown": 600000,
-  "similarityThreshold": 0.6
+  "similarityThreshold": 0.6,
+  "playerTable": "PlayerData"
 }
