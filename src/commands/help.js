@@ -31,7 +31,9 @@ Turn on endless jeopardy for your channel by typing ${jeopardyAutoCommands.join(
         '|'
       )}.
 Answers must be in the form of a question, e.g. "who is..." or "where are...".
-Use \`quit\` or \`${constants.prefix}quit\` to end the round.
+Use \`quit\` or \`${
+        constants.prefix
+      }quit\` to end the round or turn off endless jeopardy.
 See the leaderboard by typing ${leaderboardCommands.join('|')}.
 Vote daily by typing ${dailyCommands.join(
         '|'

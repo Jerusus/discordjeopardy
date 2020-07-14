@@ -3,6 +3,13 @@ const constants = require('../constants');
 const AWS = require('aws-sdk');
 const stringSimilarity = require('string-similarity');
 
+// set up persistence for scores
+AWS.config.update({
+  region: 'us-west-2',
+});
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+
 const channelState = {};
 const questionWordRegex = /^(what is|what are|whats|what's|where is|where are|wheres|where's|who is|who are|whos|who's|when is|when are|whens|when's|why is|why are|whys|why's) /i;
 
@@ -12,6 +19,37 @@ function getChannelState(channelId) {
 
 function setChannelState(channelId, val) {
   channelState[channelId] = val;
+  if (val) {
+    const newParams = {
+      TableName: constants.autoChannelTable,
+      Item: {
+        ChannelId: channelId,
+      },
+    };
+    docClient.put(newParams, function (err, data) {
+      if (err) {
+        console.error(
+          'Unable to add item. Error JSON:',
+          JSON.stringify(err, null, 2)
+        );
+      }
+    });
+  } else {
+    const deleteParams = {
+      TableName: constants.autoChannelTable,
+      Key: {
+        ChannelId: channelId,
+      },
+    };
+    docClient.delete(deleteParams, function (err, data) {
+      if (err) {
+        console.error(
+          'Unable to delete item. Error JSON:',
+          JSON.stringify(err, null, 2)
+        );
+      }
+    });
+  }
 }
 
 async function startJeopardyOnDemand(channel) {
@@ -127,7 +165,7 @@ async function startJeopardyAuto(channel) {
       startJeopardyAuto(channel);
     }, constants.jeopardyAutoCooldown);
   } else {
-    channel.send('**--ENDLESS JEOPARDY OFF--**');
+    channel.send('```diff\n- ENDLESS JEOPARDY OFF\n```');
     setChannelState(channel.id, false);
   }
 }
@@ -186,13 +224,6 @@ function isAnswerCorrect(message, answer) {
     return false;
   }
 }
-
-// set up persistence for scores
-AWS.config.update({
-  region: 'us-west-2',
-});
-
-const docClient = new AWS.DynamoDB.DocumentClient();
 
 function updatePlayerScore(m, valueChange) {
   const correctness = valueChange > 0 ? 'correct' : 'incorrect';

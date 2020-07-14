@@ -14,7 +14,7 @@ class JeopardyAutoCommand extends Command {
     if (util.getChannelState(message.channel.id)) return;
 
     console.log(`Auto game started by ${message.author.tag}`);
-    message.channel.send('**--ENDLESS JEOPARDY ON--**');
+    message.channel.send('```diff\n+ ENDLESS JEOPARDY ON\n```');
     await util.startJeopardyAuto(message.channel);
   }
 }
