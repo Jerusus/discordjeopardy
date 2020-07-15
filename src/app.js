@@ -115,8 +115,6 @@ setTimeout(() => {
               console.log(err);
               util.setChannelState(channelId, false);
             });
-        } else {
-          util.setChannelState(channelId, false);
         }
       }
     }
