@@ -119,7 +119,7 @@ setTimeout(() => {
       }
     }
   });
-}, 5000);
+}, 10000);
 
 function grantVoteBonus(userId, multiplier) {
   var points = 1000 * multiplier;
