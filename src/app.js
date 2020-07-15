@@ -106,14 +106,16 @@ setTimeout(() => {
       for (let item of data.Items) {
         const channelId = item.ChannelId;
         const channel = client.channels.get(channelId);
-        channel
-          .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
-          .then((message) => util.startJeopardyAuto(message.channel))
-          .catch((err) => {
-            // a failure usually indicates the bot no longer has permissions to post in the channel
-            console.log(err);
-            util.setChannelState(channelId, false);
-          });
+        if (channel) {
+          channel
+            .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
+            .then((message) => util.startJeopardyAuto(message.channel))
+            .catch((err) => {
+              // a failure usually indicates the bot no longer has permissions to post in the channel
+              console.log(err);
+              util.setChannelState(channelId, false);
+            });
+        }
       }
     }
   });
