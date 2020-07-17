@@ -115,11 +115,14 @@ setTimeout(() => {
               console.log(err);
               util.setChannelState(channelId, false);
             });
+        } else {
+          console.log(`ChannelId ${channelId} not found. Removing from DB.`);
+          util.setChannelState(channelId, false);
         }
       }
     }
   });
-}, 10000);
+}, 15000);
 
 function grantVoteBonus(userId, multiplier) {
   var points = 1000 * multiplier;
