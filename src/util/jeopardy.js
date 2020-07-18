@@ -180,6 +180,8 @@ async function getQuestion() {
     res.question == 'null' ||
     res.question.trim() == '' ||
     res.question == '=' ||
+    res.question.includes('audio clue') ||
+    res.question.includes('seen here') ||
     res.answer == '='
   ) {
     res = getQuestion();
