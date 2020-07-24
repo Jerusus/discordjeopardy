@@ -73,9 +73,12 @@ function displayLeaderboard(data, userMap, message) {
   });
   var msg = '**Here are the top scores on this server:**\n```\n';
   msg += '+----------------------------------------------------+\n';
-  for (var i = 0; i < 5 && i < scores.length; i++) {
+  for (var i = 0; i < 10 && i < scores.length; i++) {
+    if (scores[i].score <= 0) {
+      break;
+    }
     var rank = i + 1;
-    msg += `| ${rank}. ${scores[i].username.padEnd(34)}${
+    msg += `| ${(rank + '.').padEnd(4)}${scores[i].username.padEnd(33)}${
       ('$' + scores[i].score.toLocaleString()).padStart(13) + ' |\n'
     }`;
   }
