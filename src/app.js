@@ -112,6 +112,9 @@ setTimeout(() => {
             .then((message) => util.startJeopardyAuto(message.channel))
             .catch((err) => {
               // a failure usually indicates the bot no longer has permissions to post in the channel
+              console.log(
+                `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
+              );
               console.log(err);
               util.setChannelState(channelId, false);
             });
