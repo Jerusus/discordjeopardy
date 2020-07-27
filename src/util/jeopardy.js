@@ -47,6 +47,8 @@ function setChannelState(channelId, val) {
           'Unable to delete item. Error JSON:',
           JSON.stringify(err, null, 2)
         );
+      } else {
+        console.log(`Deleted channel ${channelId} from DB.`);
       }
     });
   }
