@@ -17,45 +17,48 @@ function getChannelState(channelId) {
   return channelState[channelId];
 }
 
-function setChannelState(channelId, val) {
+// auto is a boolean that signifies if there should be changes to the db's auto table
+function setChannelState(channelId, val, auto) {
   channelState[channelId] = val;
-  if (val) {
-    const newParams = {
-      TableName: constants.autoChannelTable,
-      Item: {
-        ChannelId: channelId,
-      },
-    };
-    docClient.put(newParams, function (err, data) {
-      if (err) {
-        console.error(
-          'Unable to add item. Error JSON:',
-          JSON.stringify(err, null, 2)
-        );
-      }
-    });
-  } else {
-    const deleteParams = {
-      TableName: constants.autoChannelTable,
-      Key: {
-        ChannelId: channelId,
-      },
-    };
-    docClient.delete(deleteParams, function (err, data) {
-      if (err) {
-        console.error(
-          'Unable to delete item. Error JSON:',
-          JSON.stringify(err, null, 2)
-        );
-      } else {
-        console.log(`Deleted channel ${channelId} from DB.`);
-      }
-    });
+  if (auto) {
+    if (val) {
+      const newParams = {
+        TableName: constants.autoChannelTable,
+        Item: {
+          ChannelId: channelId,
+        },
+      };
+      docClient.put(newParams, function (err, data) {
+        if (err) {
+          console.error(
+            'Unable to add item. Error JSON:',
+            JSON.stringify(err, null, 2)
+          );
+        }
+      });
+    } else {
+      const deleteParams = {
+        TableName: constants.autoChannelTable,
+        Key: {
+          ChannelId: channelId,
+        },
+      };
+      docClient.delete(deleteParams, function (err, data) {
+        if (err) {
+          console.error(
+            'Unable to delete item. Error JSON:',
+            JSON.stringify(err, null, 2)
+          );
+        } else {
+          console.log(`Deleted channel ${channelId} from DB.`);
+        }
+      });
+    }
   }
 }
 
 async function startJeopardyOnDemand(channel) {
-  setChannelState(channel.id, true);
+  setChannelState(channel.id, true, false);
 
   let { answer, question, value, category } = await getQuestion();
   // clean up html elements
@@ -78,13 +81,13 @@ async function startJeopardyOnDemand(channel) {
     collector.on('collect', (m) => {
       if (
         m.toString().toLowerCase() === 'quit' ||
-        m.toString().toLowerCase() === constants.prefix + 'quit'
+        m.toString().toLowerCase() === constants.flag + 'quit'
       ) {
         collector.stop('quit');
       } else if (
         // check whether the message is another call to jeopardy
         constants.jeopardyAliases.indexOf(
-          m.toString().substring(constants.prefix.length)
+          m.toString().substring(constants.flag.length)
         ) > -1
       ) {
         // trying to start a new round
@@ -108,14 +111,14 @@ async function startJeopardyOnDemand(channel) {
       } else {
         channel.send(`The correct answer was **${answer}**.`);
       }
-      setChannelState(channel.id, false);
+      setChannelState(channel.id, false, false);
       return resolve(reason);
     });
   });
 }
 
 async function startJeopardyAuto(channel) {
-  setChannelState(channel.id, true);
+  setChannelState(channel.id, true, true);
 
   let { answer, question, value, category } = await getQuestion();
   // clean up html elements
@@ -138,7 +141,7 @@ async function startJeopardyAuto(channel) {
     collector.on('collect', (m) => {
       if (
         m.toString().toLowerCase() === 'quit' ||
-        m.toString().toLowerCase() === constants.prefix + 'quit'
+        m.toString().toLowerCase() === constants.flag + 'quit'
       ) {
         collector.stop('quit');
       } else if (isQuestionFormat(m)) {
@@ -168,7 +171,7 @@ async function startJeopardyAuto(channel) {
     }, constants.jeopardyAutoCooldown);
   } else {
     channel.send('```diff\n- ENDLESS JEOPARDY OFF\n```');
-    setChannelState(channel.id, false);
+    setChannelState(channel.id, false, true);
   }
 }
 

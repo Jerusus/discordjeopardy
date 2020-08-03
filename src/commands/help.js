@@ -11,19 +11,19 @@ class HelpCommand extends Command {
   exec(message) {
     let jeopardyCommands = [];
     for (let alias of constants.jeopardyAliases) {
-      jeopardyCommands.push('`' + constants.prefix + alias + '`');
+      jeopardyCommands.push('`' + constants.flag + alias + '`');
     }
     let jeopardyAutoCommands = [];
     for (let alias of constants.jeopardyAutoAliases) {
-      jeopardyAutoCommands.push('`' + constants.prefix + alias + '`');
+      jeopardyAutoCommands.push('`' + constants.flag + alias + '`');
     }
     let leaderboardCommands = [];
     for (let alias of constants.leaderboardAliases) {
-      leaderboardCommands.push('`' + constants.prefix + alias + '`');
+      leaderboardCommands.push('`' + constants.flag + alias + '`');
     }
     let dailyCommands = [];
     for (let alias of constants.dailyAliases) {
-      dailyCommands.push('`' + constants.prefix + alias + '`');
+      dailyCommands.push('`' + constants.flag + alias + '`');
     }
     message.channel.send(
       `Start a Jeopardy! round by typing ${jeopardyCommands.join('|')}.
@@ -32,7 +32,7 @@ Turn on endless jeopardy for your channel by typing ${jeopardyAutoCommands.join(
       )}.
 Answers must be in the form of a question, e.g. "who is..." or "where are...".
 Use \`quit\` or \`${
-        constants.prefix
+        constants.flag
       }quit\` to end the round or turn off endless jeopardy.
 See the leaderboard by typing ${leaderboardCommands.join('|')}.
 Vote daily by typing ${dailyCommands.join(

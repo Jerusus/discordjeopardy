@@ -6,7 +6,7 @@ class JeopardyAutoCommand extends Command {
   constructor() {
     super('jeopardyAuto', {
       aliases: constants.jeopardyAutoAliases,
-      channelRestriction: 'guild',
+      channel: 'guild',
     });
   }
 

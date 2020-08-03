@@ -15,12 +15,12 @@ class LeaderboardCommand extends Command {
   constructor() {
     super('leaderboard', {
       aliases: constants.leaderboardAliases,
-      channelRestriction: 'guild',
+      channel: 'guild',
     });
   }
 
   exec(message) {
-    const guildMembers = message.guild.members.array();
+    const guildMembers = message.guild.members.cache.array();
     var userMap = {};
     for (let guildMember of guildMembers) {
       const user = guildMember.user;

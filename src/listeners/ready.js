@@ -1,27 +1,30 @@
 const { Listener } = require('discord-akairo');
-module.exports = class Ready extends Listener {
+
+class ReadyListener extends Listener {
   constructor() {
     super('ready', {
       emitter: 'client',
-      eventName: 'ready',
+      event: 'ready',
     });
   }
 
   exec() {
     console.log(
-      `DiscordJeopardy started. ${this.client.guilds.size} guilds, ${this.client.channels.size} channels, and ${this.client.users.size} users.`
+      `DiscordJeopardy started. ${this.client.guilds.cache.size} guilds, ${this.client.channels.cache.size} channels, and ${this.client.users.cache.size} users.`
     );
-    let flag = 0;
+    let bit = 0;
     let notices = [
       `NEW! "t.join" for Official DiscordJeopardy Server`,
       // `"t.daily" for daily vote bonus`,
       // `"t.help" for commands`,
       // `${this.client.users.size.toLocaleString()} users`,
     ];
-    this.client.user.setGame(notices[0]);
+    this.client.user.setActivity(notices[0]);
     setInterval(() => {
-      this.client.user.setGame(notices[flag % notices.length]);
-      flag++;
+      this.client.user.setActivity(notices[bit % notices.length]);
+      bit++;
     }, 600000);
   }
-};
+}
+
+module.exports = ReadyListener;

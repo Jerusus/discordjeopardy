@@ -1,5 +1,9 @@
 const Discord = require('discord.js');
-const { AkairoClient } = require('discord-akairo');
+const {
+  AkairoClient,
+  CommandHandler,
+  ListenerHandler,
+} = require('discord-akairo');
 const DBL = require('dblapi.js');
 const constants = require('./constants');
 const util = require('./util/jeopardy');
@@ -25,17 +29,33 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-const client = new AkairoClient(
-  {
-    prefix: constants.prefix,
-    allowMention: true,
-    commandDirectory: './src/commands/',
-    listenerDirectory: './src/listeners/',
-  },
-  {
-    disableEveryone: true,
+class DiscordJeopardyClient extends AkairoClient {
+  constructor() {
+    super(
+      {
+        ownerID: '175374170815725569',
+      },
+      {
+        disableMentions: 'everyone',
+      }
+    );
+
+    this.commandHandler = new CommandHandler(this, {
+      directory: './src/commands/',
+      prefix: constants.flag,
+    });
+
+    this.listenerHandler = new ListenerHandler(this, {
+      directory: './src/listeners/',
+    });
+
+    this.commandHandler.useListenerHandler(this.listenerHandler);
+    this.commandHandler.loadAll();
+    this.listenerHandler.loadAll();
   }
-);
+}
+
+const client = new DiscordJeopardyClient();
 
 client.login(process.env.TOKEN).then(() => {
   console.log('Logged in!');
@@ -87,10 +107,6 @@ setInterval(() => {
   }
 }, 900000);
 
-setTimeout(() => {
-  client.ws.connection.triggerReady();
-}, 30000);
-
 // start auto channels if needed
 setTimeout(() => {
   const scanParams = {
@@ -105,7 +121,7 @@ setTimeout(() => {
     } else {
       for (let item of data.Items) {
         const channelId = item.ChannelId;
-        const channel = client.channels.get(channelId);
+        const channel = client.channels.cache.get(channelId);
         if (channel) {
           channel
             .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
@@ -116,11 +132,11 @@ setTimeout(() => {
                 `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
               );
               console.log(err);
-              util.setChannelState(channelId, false);
+              util.setChannelState(channelId, false, true);
             });
         } else {
           console.log(`ChannelId ${channelId} not found. Removing from DB.`);
-          util.setChannelState(channelId, false);
+          util.setChannelState(channelId, false, true);
         }
       }
     }
@@ -161,7 +177,7 @@ function grantVoteBonus(userId, multiplier) {
               JSON.stringify(err, null, 2)
             );
           } else {
-            client.users
+            client.users.cache
               .get(userId)
               .send(
                 `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${points.toLocaleString()}.`
@@ -188,7 +204,7 @@ function grantVoteBonus(userId, multiplier) {
               JSON.stringify(err, null, 2)
             );
           } else {
-            client.users
+            client.users.cache
               .get(userId)
               .send(
                 `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${data.Attributes.Score.toLocaleString()}.`

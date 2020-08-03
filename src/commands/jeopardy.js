@@ -6,7 +6,7 @@ class JeopardyCommand extends Command {
   constructor() {
     super('jeopardy', {
       aliases: constants.jeopardyAliases,
-      channelRestriction: 'guild',
+      channel: 'guild',
       cooldown: constants.jeopardyCooldown,
     });
   }
