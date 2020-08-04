@@ -144,6 +144,11 @@ async function startJeopardyAuto(channel) {
         m.toString().toLowerCase() === constants.flag + 'quit'
       ) {
         collector.stop('quit');
+      } else if (
+        m.toString().toLowerCase() === 'skip' ||
+        m.toString().toLowerCase() === constants.flag + 'skip'
+      ) {
+        collector.stop('skip');
       } else if (isQuestionFormat(m)) {
         if (isAnswerCorrect(m, answer)) {
           updatePlayerScore(m, value);
@@ -155,6 +160,7 @@ async function startJeopardyAuto(channel) {
     });
     collector.on('end', (m, reason) => {
       // time: timeout
+      // skip: skip question
       // correct: correct answer
       if (!(reason == 'correct')) {
         channel.send(`Time's up! The correct answer was **${answer}**.`);

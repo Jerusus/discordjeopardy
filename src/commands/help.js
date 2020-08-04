@@ -29,7 +29,7 @@ class HelpCommand extends Command {
       `Start a Jeopardy! round by typing ${jeopardyCommands.join('|')}.
 Turn on endless jeopardy for your channel by typing ${jeopardyAutoCommands.join(
         '|'
-      )}.
+      )}. Skip questions using \`skip\` or \`t.skip\`.
 Answers must be in the form of a question, e.g. "who is..." or "where are...".
 Use \`quit\` or \`${
         constants.flag
