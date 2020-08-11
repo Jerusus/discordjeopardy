@@ -17,7 +17,7 @@ class ReadyListener extends Listener {
       `"t.join" for Official DiscordJeopardy Server`,
       `"t.daily" for daily vote bonus`,
       `"t.help" for commands`,
-      `${this.client.users.size.toLocaleString()} users`,
+      `${this.client.users.cache.size.toLocaleString()} users`,
     ];
     this.client.user.setActivity(notices[0]);
     setInterval(() => {
