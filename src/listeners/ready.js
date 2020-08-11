@@ -14,10 +14,10 @@ class ReadyListener extends Listener {
     );
     let bit = 0;
     let notices = [
-      `NEW! "t.join" for Official DiscordJeopardy Server`,
-      // `"t.daily" for daily vote bonus`,
-      // `"t.help" for commands`,
-      // `${this.client.users.size.toLocaleString()} users`,
+      `"t.join" for Official DiscordJeopardy Server`,
+      `"t.daily" for daily vote bonus`,
+      `"t.help" for commands`,
+      `${this.client.users.size.toLocaleString()} users`,
     ];
     this.client.user.setActivity(notices[0]);
     setInterval(() => {
