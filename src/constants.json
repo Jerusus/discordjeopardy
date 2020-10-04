@@ -7,7 +7,7 @@
   "roundTime": 60000,
   "autoRoundTime": 60000,
   "jeopardyCooldown": 2000,
-  "jeopardyAutoCooldown": 2000,
+  "jeopardyAutoCooldown": 3000,
   "leaderboardCooldown": 600000,
   "similarityThreshold": 0.6,
   "playerTable": "PlayerData",
