@@ -37,6 +37,16 @@ class DiscordJeopardyClient extends AkairoClient {
         ownerID: '175374170815725569',
       },
       {
+        ws: {
+          intents: [
+            'GUILDS',
+            'GUILD_MEMBERS',
+            'GUILD_MESSAGES',
+            'DIRECT_MESSAGES',
+          ],
+        },
+      },
+      {
         disableMentions: 'everyone',
       }
     );
