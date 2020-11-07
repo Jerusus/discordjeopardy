@@ -20,17 +20,22 @@ class LeaderboardCommand extends Command {
   }
 
   exec(message) {
-    message.guild.members.fetch();
-    const guildMembers = message.guild.members.cache.array();
-    var userMap = {};
-    for (let guildMember of guildMembers) {
-      const user = guildMember.user;
-      userMap[user.id] = user.username;
+    if (cacheFresh) {
+      console.log('Using db cache...');
+      displayLeaderboard(dbCache, userMap, message);
+      return;
     }
-    var scanParams = {
-      TableName: constants.playerTable,
-    };
-    if (!cacheFresh) {
+
+    message.guild.members.fetch().then(() => {
+      const guildMembers = message.guild.members.cache.array();
+      var userMap = {};
+      for (let guildMember of guildMembers) {
+        const user = guildMember.user;
+        userMap[user.id] = user.username;
+      }
+      var scanParams = {
+        TableName: constants.playerTable,
+      };
       console.log('Scanning db...');
       docClient.scan(scanParams, function (err, data) {
         if (err) {
@@ -48,10 +53,7 @@ class LeaderboardCommand extends Command {
           displayLeaderboard(data, userMap, message);
         }
       });
-    } else {
-      console.log('Using db cache...');
-      displayLeaderboard(dbCache, userMap, message);
-    }
+    });
   }
 }
 
