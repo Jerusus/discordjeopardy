@@ -11,6 +11,7 @@ const AWS = require('aws-sdk');
 const express = require('express');
 const http = require('http');
 const { get } = require('snekfetch');
+const { Intents } = require('discord.js');
 
 const app = express();
 const server = http.createServer(app);
@@ -34,6 +35,9 @@ class DiscordJeopardyClient extends AkairoClient {
     super(
       {
         ownerID: '175374170815725569',
+      },
+      {
+        ws: { intents: ['GUILD_MEMBERS'] },
       },
       {
         disableMentions: 'everyone',
