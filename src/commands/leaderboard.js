@@ -20,6 +20,7 @@ class LeaderboardCommand extends Command {
   }
 
   exec(message) {
+    message.guild.members.fetch();
     const guildMembers = message.guild.members.cache.array();
     var userMap = {};
     for (let guildMember of guildMembers) {
