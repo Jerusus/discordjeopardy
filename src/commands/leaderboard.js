@@ -20,6 +20,7 @@ class LeaderboardCommand extends Command {
   }
 
   exec(message) {
+    console.log(`Leaderboard requested by ${message.author.tag}`);
     message.guild.members.fetch().then(() => {
       const guildMembers = message.guild.members.cache.array();
       var userMap = {};
@@ -71,7 +72,6 @@ function displayLeaderboard(data, userMap, message) {
     );
     scores.push(curScoreObject);
   }
-  console.log(scores);
   scores.sort((a, b) => {
     return b.score - a.score;
   });

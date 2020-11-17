@@ -127,7 +127,7 @@ setTimeout(() => {
             channel
               .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
               .then((message) => {
-                console.log(`Enabling auto mode for ${channelId}.`);
+                console.log(`Enabling auto game for ${channelId}`);
                 util.startJeopardyAuto(message.channel);
               })
               .catch((err) => {
