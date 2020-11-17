@@ -119,26 +119,28 @@ setTimeout(() => {
         JSON.stringify(err, null, 2)
       );
     } else {
-      for (let item of data.Items) {
-        const channelId = item.ChannelId;
-        const channel = client.channels.cache.get(channelId);
-        if (channel) {
-          channel
-            .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
-            .then((message) => util.startJeopardyAuto(message.channel))
-            .catch((err) => {
-              // a failure usually indicates the bot no longer has permissions to post in the channel
-              console.log(
-                `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
-              );
-              console.log(err);
-              util.setChannelState(channelId, false, true);
-            });
-        } else {
-          console.log(`ChannelId ${channelId} not found. Removing from DB.`);
-          util.setChannelState(channelId, false, true);
+      client.channels.fetch().then(() => {
+        for (let item of data.Items) {
+          const channelId = item.ChannelId;
+          const channel = client.channels.cache.get(channelId);
+          if (channel) {
+            channel
+              .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
+              .then((message) => util.startJeopardyAuto(message.channel))
+              .catch((err) => {
+                // a failure usually indicates the bot no longer has permissions to post in the channel
+                console.log(
+                  `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
+                );
+                console.log(err);
+                util.setChannelState(channelId, false, true);
+              });
+          } else {
+            console.log(`ChannelId ${channelId} not found. Removing from DB.`);
+            util.setChannelState(channelId, false, true);
+          }
         }
-      }
+      });
     }
   });
 }, 15000);
