@@ -8,10 +8,10 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-class LeaderboardCommand extends Command {
-  static dbCache;
-  static cacheFresh = false;
+let dbCache;
+let cacheFresh = false;
 
+class LeaderboardCommand extends Command {
   constructor() {
     super('leaderboard', {
       aliases: constants.leaderboardAliases,
@@ -20,12 +20,6 @@ class LeaderboardCommand extends Command {
   }
 
   exec(message) {
-    if (cacheFresh) {
-      console.log('Using db cache...');
-      displayLeaderboard(dbCache, userMap, message);
-      return;
-    }
-
     message.guild.members.fetch().then(() => {
       const guildMembers = message.guild.members.cache.array();
       var userMap = {};
@@ -33,6 +27,13 @@ class LeaderboardCommand extends Command {
         const user = guildMember.user;
         userMap[user.id] = user.username;
       }
+
+      if (cacheFresh) {
+        console.log('Using db cache...');
+        displayLeaderboard(dbCache, userMap, message);
+        return;
+      }
+
       var scanParams = {
         TableName: constants.playerTable,
       };
