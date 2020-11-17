@@ -8,10 +8,10 @@ AWS.config.update({
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-let dbCache;
-let cacheFresh = false;
-
 class LeaderboardCommand extends Command {
+  static dbCache;
+  static cacheFresh = false;
+
   constructor() {
     super('leaderboard', {
       aliases: constants.leaderboardAliases,
