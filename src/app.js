@@ -119,14 +119,17 @@ setTimeout(() => {
         JSON.stringify(err, null, 2)
       );
     } else {
-      client.channels.fetch().then(() => {
-        for (let item of data.Items) {
-          const channelId = item.ChannelId;
-          const channel = client.channels.cache.get(channelId);
-          if (channel) {
+      for (let item of data.Items) {
+        const channelId = item.ChannelId;
+        client.channels
+          .fetch(channelId)
+          .then((channel) => {
             channel
               .send('```diff\n+ ENDLESS JEOPARDY ON\n```')
-              .then((message) => util.startJeopardyAuto(message.channel))
+              .then((message) => {
+                console.log(`Enabling auto mode for ${channelId}.`);
+                util.startJeopardyAuto(message.channel);
+              })
               .catch((err) => {
                 // a failure usually indicates the bot no longer has permissions to post in the channel
                 console.log(
@@ -135,12 +138,12 @@ setTimeout(() => {
                 console.log(err);
                 util.setChannelState(channelId, false, true);
               });
-          } else {
+          })
+          .catch(() => {
             console.log(`ChannelId ${channelId} not found. Removing from DB.`);
             util.setChannelState(channelId, false, true);
-          }
-        }
-      });
+          });
+      }
     }
   });
 }, 15000);
