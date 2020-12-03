@@ -1,14 +1,7 @@
 const { get } = require('snekfetch');
 const constants = require('../constants');
-const AWS = require('aws-sdk');
 const stringSimilarity = require('string-similarity');
-
-// set up persistence for scores
-AWS.config.update({
-  region: 'us-west-2',
-});
-
-const docClient = new AWS.DynamoDB.DocumentClient();
+const db = require('./database');
 
 const channelState = {};
 const questionWordRegex = /^(what is|what are|whats|what's|where is|where are|wheres|where's|who is|who are|whos|who's|when is|when are|whens|when's|why is|why are|whys|why's) /i;
@@ -22,37 +15,9 @@ function setChannelState(channelId, val, auto) {
   channelState[channelId] = val;
   if (auto) {
     if (val) {
-      const newParams = {
-        TableName: constants.autoChannelTable,
-        Item: {
-          ChannelId: channelId,
-        },
-      };
-      docClient.put(newParams, function (err, data) {
-        if (err) {
-          console.error(
-            'Unable to add item. Error JSON:',
-            JSON.stringify(err, null, 2)
-          );
-        }
-      });
+      db.addAutoChannel(channelId);
     } else {
-      const deleteParams = {
-        TableName: constants.autoChannelTable,
-        Key: {
-          ChannelId: channelId,
-        },
-      };
-      docClient.delete(deleteParams, function (err, data) {
-        if (err) {
-          console.error(
-            'Unable to delete item. Error JSON:',
-            JSON.stringify(err, null, 2)
-          );
-        } else {
-          console.log(`Deleted channel ${channelId} from DB.`);
-        }
-      });
+      db.removeAutoChannel(channelId);
     }
   }
 }
@@ -242,78 +207,21 @@ function updatePlayerScore(m, valueChange) {
   const correctness = valueChange > 0 ? 'correct' : 'incorrect';
   const excitement = valueChange > 0 ? '!' : '.';
 
-  const readParams = {
-    TableName: constants.playerTable,
-    Key: {
-      UserId: m.author.id,
-    },
+  let successFxn = (value) => {
+    m.channel.send(
+      `That is ${correctness}, ${
+        m.author.username
+      }${excitement} Your score is now $${value.toLocaleString()}.`
+    );
   };
 
-  docClient.get(readParams, function (err, data) {
-    if (err) {
-      m.channel.send(
-        `That is ${correctness}, ${m.author.username}${excitement} Err: Database down.`
-      );
-      console.error(
-        'Unable to read item. Error JSON:',
-        JSON.stringify(err, null, 2)
-      );
-    } else {
-      if (data.Item == undefined) {
-        // player doesn't exist in the db
-        console.log('New player!', m.author.id);
-        const newParams = {
-          TableName: constants.playerTable,
-          Item: {
-            UserId: m.author.id,
-            Score: Math.max(valueChange, 0),
-          },
-        };
-        docClient.put(newParams, function (err, data) {
-          if (err) {
-            console.error(
-              'Unable to add item. Error JSON:',
-              JSON.stringify(err, null, 2)
-            );
-          } else {
-            m.channel.send(
-              `That is ${correctness}, ${
-                m.author.username
-              }${excitement} Your score is now $${valueChange.toLocaleString()}.`
-            );
-          }
-        });
-      } else {
-        currentScore = data.Item.Score;
+  let errFxn = () => {
+    m.channel.send(
+      `That is ${correctness}, ${m.author.username}${excitement} Err: Database down.`
+    );
+  };
 
-        // player already exists
-        const updateParams = {
-          TableName: constants.playerTable,
-          Key: { UserId: m.author.id },
-          UpdateExpression: 'set Score = :s',
-          ExpressionAttributeValues: {
-            ':s': Math.max(currentScore + valueChange, 0),
-          },
-          ReturnValues: 'UPDATED_NEW',
-        };
-        docClient.update(updateParams, function (err, data) {
-          if (err) {
-            console.error(
-              'Unable to update item. Error JSON:',
-              JSON.stringify(err, null, 2)
-            );
-          } else {
-            m.channel.send(
-              `That is ${correctness}, ${
-                m.author.username
-              }${excitement} Your score is now $${data.Attributes.Score.toLocaleString()}.`
-            );
-            console.log('Score:', data.Attributes.Score);
-          }
-        });
-      }
-    }
-  });
+  db.upsertPlayer(m.author.id, valueChange, successFxn, errFxn);
 }
 
 module.exports = {

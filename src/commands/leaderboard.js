@@ -1,12 +1,6 @@
 const { Command } = require('discord-akairo');
 const constants = require('../constants');
-const AWS = require('aws-sdk');
-
-AWS.config.update({
-  region: 'us-west-2',
-});
-
-const docClient = new AWS.DynamoDB.DocumentClient();
+const db = require('../util/database');
 
 let dbCache;
 let cacheFresh = false;
@@ -28,33 +22,7 @@ class LeaderboardCommand extends Command {
         const user = guildMember.user;
         userMap[user.id] = user.username;
       }
-
-      if (cacheFresh) {
-        console.log('Using db cache...');
-        displayLeaderboard(dbCache, userMap, message);
-        return;
-      }
-
-      var scanParams = {
-        TableName: constants.playerTable,
-      };
-      console.log('Scanning db...');
-      docClient.scan(scanParams, function (err, data) {
-        if (err) {
-          console.error(
-            'Unable to read item. Error JSON:',
-            JSON.stringify(err, null, 2)
-          );
-        } else {
-          cacheFresh = true;
-          dbCache = data;
-          setTimeout(() => {
-            cacheFresh = false;
-          }, constants.leaderboardCooldown);
-
-          displayLeaderboard(data, userMap, message);
-        }
-      });
+      db.getLeaderboard(userMap, message, displayLeaderboard);
     });
   }
 }
