@@ -135,23 +135,20 @@ setTimeout(() => {
 }, 15000);
 
 function grantVoteBonus(userId, multiplier) {
-  var points = 1000 * multiplier;
-
-  let successFxn = () => {
-    client.users.cache
-      .get(userId)
-      .send(
-        `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${points.toLocaleString()}.`
-      );
-  };
-
-  let errFxn = () => {
-    client.users.cache
-      .get(userId)
-      .send(
-        `Thanks for voting! Err: Database down. (Sorry! Message the bot creator to complain!)`
-      );
-  };
-
-  db.upsertPlayer(userId, points, successFxn, errFxn);
+  // var points = 1000 * multiplier;
+  // let successFxn = () => {
+  //   client.users.cache
+  //     .get(userId)
+  //     .send(
+  //       `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${points.toLocaleString()}.`
+  //     );
+  // };
+  // let errFxn = () => {
+  //   client.users.cache
+  //     .get(userId)
+  //     .send(
+  //       `Thanks for voting! Err: Database down. (Sorry! Message the bot creator to complain!)`
+  //     );
+  // };
+  // db.upsertPlayer(userId, points, successFxn, errFxn);
 }
