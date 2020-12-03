@@ -158,6 +158,7 @@ async function getQuestion() {
     res.question == '=' ||
     res.question.includes('audio clue') ||
     res.question.includes('seen here') ||
+    res.answer.includes('----') ||
     res.answer == '='
   ) {
     res = getQuestion();
