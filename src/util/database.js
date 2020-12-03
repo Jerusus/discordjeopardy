@@ -94,8 +94,6 @@ function addAutoChannel(channelId) {
         'Unable to add item. Error JSON:',
         JSON.stringify(err, null, 2)
       );
-    } else {
-      console.log(`Added channel ${channelId} to DB.`);
     }
   });
 }
