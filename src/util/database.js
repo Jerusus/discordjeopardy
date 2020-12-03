@@ -144,11 +144,11 @@ function upsertPlayer(userId, valueChange, success, optErr) {
       if (response.data.Item == undefined) {
         // player doesn't exist in the db
         console.log('New player!', userId);
-        db.putPlayer(userId, valueChange, success, optErr);
+        putPlayer(userId, valueChange, success, optErr);
       } else {
         // player already exists
         currentScore = response.data.Item.Score;
-        db.updatePlayer(userId, currentScore + valueChange, success, optErr);
+        updatePlayer(userId, currentScore + valueChange, success, optErr);
       }
     })
     .on('error', (err) => {
