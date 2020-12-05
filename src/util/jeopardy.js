@@ -161,7 +161,13 @@ async function getQuestion() {
 }
 
 function getPrompt(jObj) {
-  return `The category is **${jObj.category.title}** for $${jObj.value}:\n\`\`\`${jObj.question}\`\`\``;
+  const date = new Date(jObj.airdate);
+  const dateFormat = new Intl.DateTimeFormat('en', {
+    year: 'numeric',
+    month: 'short',
+  });
+  const fDate = dateFormat.format(date);
+  return `The category is **${jObj.category.title}** for $${jObj.value}:\n\`\`\`(${fDate}) ${jObj.question}\`\`\``;
 }
 
 function updatePlayerScore(m, valueChange) {
