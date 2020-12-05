@@ -12,10 +12,7 @@ function isQuestionFormat(text) {
 function isAnswerCorrect(text, answer) {
   text = text.replace(/[^\w\s]/i, '').replace(questionWordRegex, '');
 
-  var similarity = stringSimilarity.compareTwoStrings(
-    text,
-    answer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-  );
+  var similarity = stringSimilarity.compareTwoStrings(text, answer);
 
   // check if the user's submission matches the question's alternative answer (if any)
   var parenthesesRegex = /\(([^)]+)\)/;

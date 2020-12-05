@@ -42,24 +42,24 @@ function JeopardyObject(
 async function startJeopardyOnDemand(channel) {
   setChannelState(channel.id, true, false);
 
-  let jeopardyObj = await getQuestion();
+  let jObj = await getQuestion();
 
-  channel.send(jeopardyObj.prompt);
+  channel.send(getPrompt(jObj));
 
   const finish = await new Promise((resolve, reject) => {
-    handleMessages(resolve, channel, jeopardyObj, false);
+    handleMessages(resolve, channel, jObj, false);
   });
 }
 
 async function startJeopardyAuto(channel) {
   setChannelState(channel.id, true, true);
 
-  let jeopardyObj = await getQuestion();
+  let jObj = await getQuestion();
 
-  channel.send(jeopardyObj.prompt);
+  channel.send(getPrompt(jObj));
 
   const finish = await new Promise((resolve, reject) => {
-    handleMessages(resolve, channel, jeopardyObj, true);
+    handleMessages(resolve, channel, jObj, true);
   });
 
   if (finish !== 'quit') {
@@ -72,7 +72,7 @@ async function startJeopardyAuto(channel) {
   }
 }
 
-function handleMessages(resolve, channel, j, isAuto) {
+function handleMessages(resolve, channel, jObj, isAuto) {
   const collector = channel.createMessageCollector(
     (m) => m.author.username != 'JeopardyBot',
     {
@@ -97,11 +97,11 @@ function handleMessages(resolve, channel, j, isAuto) {
       // trying to start a new round
       collector.stop('restart');
     } else if (str.isQuestionFormat(text)) {
-      if (str.isAnswerCorrect(text, j.answer)) {
-        updatePlayerScore(m, j.value);
+      if (str.isAnswerCorrect(text, jObj.answer)) {
+        updatePlayerScore(m, jObj.value);
         collector.stop('correct');
       } else {
-        updatePlayerScore(m, 0 - j.value);
+        updatePlayerScore(m, 0 - jObj.value);
       }
     }
   });
@@ -111,11 +111,9 @@ function handleMessages(resolve, channel, j, isAuto) {
     // skip: in auto, skip question
     // correct: correct answer
     if (!(reason == 'correct')) {
-      channel.send(
-        `Time's up! The correct answer was **${j.normalizedAnswer}**.`
-      );
+      channel.send(`Time's up! The correct answer was **${jObj.answer}**.`);
     } else {
-      channel.send(`The correct answer was **${j.normalizedAnswer}**.`);
+      channel.send(`The correct answer was **${jObj.answer}**.`);
     }
     if (!isAuto) {
       setChannelState(channel.id, false, false);
@@ -143,14 +141,15 @@ async function getQuestion() {
   }
 
   // clean up html elements
-  let normalizedAnswer = res.answer.replace(/<(?:.|\n)*?>/gm, '').toLowerCase();
+  let normalizedAnswer = res.answer
+    .replace(/<(?:.|\n)*?>/gm, '')
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+    .toLowerCase();
   // clean up value
   let value = res.value;
   if (!value || value == null) {
     value = 200;
   }
-
-  let prompt = `The category is **${res.category.title}** for $${value}:\n\`\`\`${res.question}\`\`\``;
 
   return new JeopardyObject(
     res.answer,
@@ -158,9 +157,12 @@ async function getQuestion() {
     res.question,
     value,
     res.category,
-    res.airdate,
-    prompt
+    res.airdate
   );
+}
+
+function getPrompt(jObj) {
+  return `The category is **${jObj.category.title}** for $${jObj.value}:\n\`\`\`${jObj.question}\`\`\``;
 }
 
 function updatePlayerScore(m, valueChange) {
