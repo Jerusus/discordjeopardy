@@ -80,7 +80,10 @@ function handleMessages(resolve, channel, jObj, isAuto) {
     }
   );
   collector.on('collect', (m) => {
-    let text = m.toString().toLowerCase();
+    let text = m
+      .toString()
+      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .toLowerCase();
     if (text === 'quit' || text === constants.flag + 'quit') {
       collector.stop('quit');
     } else if (
@@ -97,7 +100,7 @@ function handleMessages(resolve, channel, jObj, isAuto) {
       // trying to start a new round
       collector.stop('restart');
     } else if (str.isQuestionFormat(text)) {
-      if (str.isAnswerCorrect(text, jObj.answer)) {
+      if (str.isAnswerCorrect(text, jObj.normalizedAnswer)) {
         updatePlayerScore(m, jObj.value);
         collector.stop('correct');
       } else {
@@ -141,10 +144,9 @@ async function getQuestion() {
   }
 
   // clean up html elements
-  let normalizedAnswer = res.answer
-    .replace(/<(?:.|\n)*?>/gm, '')
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
-    .toLowerCase();
+  let answer = res.answer.replace(/<(?:.|\n)*?>/gm, '');
+  // normalize answer for matching
+  let normalizedAnswer = answer.replace(/[^a-zA-Z0-9() ]/g, '').toLowerCase();
   // clean up value
   let value = res.value;
   if (!value || value == null) {
@@ -152,7 +154,7 @@ async function getQuestion() {
   }
 
   return new JeopardyObject(
-    res.answer,
+    answer,
     normalizedAnswer,
     res.question,
     value,
