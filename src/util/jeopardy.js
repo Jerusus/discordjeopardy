@@ -1,10 +1,9 @@
 const { get } = require('snekfetch');
 const constants = require('../constants');
-const stringSimilarity = require('string-similarity');
+const str = require('./strings');
 const db = require('./database');
 
 const channelState = {};
-const questionWordRegex = /^(what is|what are|whats|what's|where is|where are|wheres|where's|who is|who are|whos|who's|when is|when are|whens|when's|why is|why are|whys|why's) /i;
 
 function getChannelState(channelId) {
   return channelState[channelId];
@@ -22,118 +21,45 @@ function setChannelState(channelId, val, auto) {
   }
 }
 
+function JeopardyObject(
+  answer,
+  normalizedAnswer,
+  question,
+  value,
+  category,
+  airdate,
+  prompt
+) {
+  this.answer = answer;
+  this.normalizedAnswer = normalizedAnswer;
+  this.question = question;
+  this.value = value;
+  this.category = category;
+  this.airdate = airdate;
+  this.prompt = prompt;
+}
+
 async function startJeopardyOnDemand(channel) {
   setChannelState(channel.id, true, false);
 
-  let { answer, question, value, category } = await getQuestion();
-  // clean up html elements
-  answer = answer.replace(/<(?:.|\n)*?>/gm, '');
-  // clean up value
-  if (!value || value == null) {
-    value = 200;
-  }
+  let jeopardyObj = await getQuestion();
 
-  const prompt = `The category is **${category.title}** for $${value}:\n\`\`\`${question}\`\`\``;
-  channel.send(prompt);
+  channel.send(jeopardyObj.prompt);
 
   const finish = await new Promise((resolve, reject) => {
-    const collector = channel.createMessageCollector(
-      (m) => m.author.username != 'JeopardyBot',
-      {
-        time: constants.roundTime,
-      }
-    );
-    collector.on('collect', (m) => {
-      if (
-        m.toString().toLowerCase() === 'quit' ||
-        m.toString().toLowerCase() === constants.flag + 'quit'
-      ) {
-        collector.stop('quit');
-      } else if (
-        // check whether the message is another call to jeopardy
-        constants.jeopardyAliases.indexOf(
-          m.toString().substring(constants.flag.length)
-        ) > -1
-      ) {
-        // trying to start a new round
-        collector.stop('restart');
-      } else if (isQuestionFormat(m)) {
-        if (isAnswerCorrect(m, answer)) {
-          updatePlayerScore(m, value);
-          collector.stop('correct');
-        } else {
-          updatePlayerScore(m, 0 - value);
-        }
-      }
-    });
-    collector.on('end', (m, reason) => {
-      // quit: quit
-      // time: timeout
-      // restart: start a new round before current one is over
-      // correct: correct answer
-      if (!(reason == 'correct')) {
-        channel.send(`Time's up! The correct answer was **${answer}**.`);
-      } else {
-        channel.send(`The correct answer was **${answer}**.`);
-      }
-      setChannelState(channel.id, false, false);
-      return resolve(reason);
-    });
+    handleMessages(resolve, channel, jeopardyObj, false);
   });
 }
 
 async function startJeopardyAuto(channel) {
   setChannelState(channel.id, true, true);
 
-  let { answer, question, value, category } = await getQuestion();
-  // clean up html elements
-  answer = answer.replace(/<(?:.|\n)*?>/gm, '');
-  // clean up value
-  if (!value || value == null) {
-    value = 200;
-  }
+  let jeopardyObj = await getQuestion();
 
-  const prompt = `The category is **${category.title}** for $${value}:\n\`\`\`${question}\`\`\``;
-  channel.send(prompt);
+  channel.send(jeopardyObj.prompt);
 
   const finish = await new Promise((resolve, reject) => {
-    const collector = channel.createMessageCollector(
-      (m) => m.author.username != 'JeopardyBot',
-      {
-        time: constants.autoRoundTime,
-      }
-    );
-    collector.on('collect', (m) => {
-      if (
-        m.toString().toLowerCase() === 'quit' ||
-        m.toString().toLowerCase() === constants.flag + 'quit'
-      ) {
-        collector.stop('quit');
-      } else if (
-        m.toString().toLowerCase() === 'skip' ||
-        m.toString().toLowerCase() === constants.flag + 'skip'
-      ) {
-        collector.stop('skip');
-      } else if (isQuestionFormat(m)) {
-        if (isAnswerCorrect(m, answer)) {
-          updatePlayerScore(m, value);
-          collector.stop('correct');
-        } else {
-          updatePlayerScore(m, 0 - value);
-        }
-      }
-    });
-    collector.on('end', (m, reason) => {
-      // time: timeout
-      // skip: skip question
-      // correct: correct answer
-      if (!(reason == 'correct')) {
-        channel.send(`Time's up! The correct answer was **${answer}**.`);
-      } else {
-        channel.send(`The correct answer was **${answer}**.`);
-      }
-      return resolve(reason);
-    });
+    handleMessages(resolve, channel, jeopardyObj, true);
   });
 
   if (finish !== 'quit') {
@@ -144,6 +70,58 @@ async function startJeopardyAuto(channel) {
     channel.send('```diff\n- ENDLESS JEOPARDY OFF\n```');
     setChannelState(channel.id, false, true);
   }
+}
+
+function handleMessages(resolve, channel, j, isAuto) {
+  const collector = channel.createMessageCollector(
+    (m) => m.author.username != 'JeopardyBot',
+    {
+      time: isAuto ? constants.autoRoundTime : constants.roundTime,
+    }
+  );
+  collector.on('collect', (m) => {
+    let text = m.toString().toLowerCase();
+    if (text === 'quit' || text === constants.flag + 'quit') {
+      collector.stop('quit');
+    } else if (
+      isAuto &&
+      (text === 'skip' || text === constants.flag + 'skip')
+    ) {
+      collector.stop('skip');
+    } else if (
+      // check whether the message is another call to jeopardy
+      !isAuto &&
+      constants.jeopardyAliases.indexOf(text.substring(constants.flag.length)) >
+        -1
+    ) {
+      // trying to start a new round
+      collector.stop('restart');
+    } else if (str.isQuestionFormat(text)) {
+      if (str.isAnswerCorrect(text, j.answer)) {
+        updatePlayerScore(m, j.value);
+        collector.stop('correct');
+      } else {
+        updatePlayerScore(m, 0 - j.value);
+      }
+    }
+  });
+  collector.on('end', (m, reason) => {
+    // time: timeout
+    // restart: in non-auto, start a new round before current one is over
+    // skip: in auto, skip question
+    // correct: correct answer
+    if (!(reason == 'correct')) {
+      channel.send(
+        `Time's up! The correct answer was **${j.normalizedAnswer}**.`
+      );
+    } else {
+      channel.send(`The correct answer was **${j.normalizedAnswer}**.`);
+    }
+    if (!isAuto) {
+      setChannelState(channel.id, false, false);
+    }
+    return resolve(reason);
+  });
 }
 
 async function getQuestion() {
@@ -161,47 +139,28 @@ async function getQuestion() {
     res.answer.includes('----') ||
     res.answer == '='
   ) {
-    res = getQuestion();
+    return getQuestion();
   }
-  return res;
-}
 
-// strip punctuation and crude check for question format
-// returns truthy value if it is
-function isQuestionFormat(message) {
-  let text = message.toString();
-  return text.replace(/[^\w\s]/i, '').match(questionWordRegex);
-}
+  // clean up html elements
+  let normalizedAnswer = res.answer.replace(/<(?:.|\n)*?>/gm, '').toLowerCase();
+  // clean up value
+  let value = res.value;
+  if (!value || value == null) {
+    value = 200;
+  }
 
-function isAnswerCorrect(message, answer) {
-  let text = message
-    .toString()
-    .replace(/[^\w\s]/i, '')
-    .replace(questionWordRegex, '')
-    .toLowerCase();
-  var similarity = stringSimilarity.compareTwoStrings(
-    text,
-    answer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+  let prompt = `The category is **${res.category.title}** for $${value}:\n\`\`\`${res.question}\`\`\``;
+
+  return new JeopardyObject(
+    res.answer,
+    normalizedAnswer,
+    res.question,
+    value,
+    res.category,
+    res.airdate,
+    prompt
   );
-
-  // check if the user's submission matches the question's alternative answer (if any)
-  var parenthesesRegex = /\(([^)]+)\)/;
-  if (parenthesesRegex.test(answer)) {
-    var matches = parenthesesRegex.exec(answer);
-    if (isAnswerCorrect(text, matches[1])) {
-      return true;
-    }
-    let exclude = answer.split(matches[0]);
-    if (isAnswerCorrect(text, exclude[0])) {
-      return true;
-    }
-  }
-
-  if (similarity > constants.similarityThreshold) {
-    return true;
-  } else {
-    return false;
-  }
 }
 
 function updatePlayerScore(m, valueChange) {
