@@ -80,10 +80,7 @@ function handleMessages(resolve, channel, jObj, isAuto) {
     }
   );
   collector.on('collect', (m) => {
-    let text = m
-      .toString()
-      .replace(/[^a-zA-Z0-9 ]/g, '')
-      .toLowerCase();
+    let text = m.toString().toLowerCase();
     if (text === 'quit' || text === constants.flag + 'quit') {
       collector.stop('quit');
     } else if (

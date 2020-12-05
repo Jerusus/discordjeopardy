@@ -10,7 +10,7 @@ function isQuestionFormat(text) {
 }
 
 function isAnswerCorrect(text, answer) {
-  text = text.replace(questionWordRegex, '');
+  text = text.replace(/[^a-zA-Z0-9 ]/g, '').replace(questionWordRegex, '');
 
   var similarity = stringSimilarity.compareTwoStrings(text, answer);
 
