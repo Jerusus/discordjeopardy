@@ -44,17 +44,17 @@ function displayLeaderboard(data, userMap, message) {
     return b.score - a.score;
   });
   var msg = '**Here are the top scores on this server:**\n```\n';
-  msg += '+----------------------------------------------------+\n';
+  msg += '+------------------------------------------+\n';
   for (var i = 0; i < 10 && i < scores.length; i++) {
     if (scores[i].score <= 0) {
       break;
     }
     var rank = i + 1;
-    msg += `| ${(rank + '.').padEnd(4)}${scores[i].username.padEnd(33)}${
+    msg += `| ${(rank + '.').padEnd(4)}${scores[i].username.padEnd(23)}${
       ('$' + scores[i].score.toLocaleString()).padStart(13) + ' |\n'
     }`;
   }
-  msg += '+----------------------------------------------------+\n';
+  msg += '+------------------------------------------+\n';
   msg += '```';
   message.channel.send(msg);
 }
