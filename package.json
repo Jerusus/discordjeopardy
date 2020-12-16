@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/Jerusus/discordjeopardy#readme",
   "dependencies": {
-    "aws-sdk": "^2.802.0",
+    "aws-sdk": "^2.811.0",
     "dblapi.js": "^2.4.1",
     "discord-akairo": "^8.1.0",
     "discord.js": "^12.5.1",
