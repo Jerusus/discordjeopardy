@@ -143,14 +143,28 @@ function grantVoteBonus(userId, multiplier) {
       .get(userId)
       .send(
         `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${value.toLocaleString()}.`
-      );
+      )
+      .catch((err) => {
+        logVoteMessageError(err, userId);
+      });
   };
   let errFxn = () => {
     client.users.cache
       .get(userId)
       .send(
         `Thanks for voting! Err: Database down. (Sorry! Message the bot creator to complain!)`
-      );
+      )
+      .catch((err) => {
+        logVoteMessageError(err, userId);
+      });
   };
   db.upsertPlayer(userId, points, successFxn, errFxn);
+}
+
+function logVoteMessageError(err, userId) {
+  // a failure usually indicates the bot is not allowed to message the user
+  console.log(
+    `UserId ${userId} gave the following error when attempting to send a message.`
+  );
+  console.log(err);
 }
