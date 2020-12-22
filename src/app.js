@@ -139,24 +139,28 @@ setTimeout(() => {
 function grantVoteBonus(userId, multiplier) {
   var points = 1000 * multiplier;
   let successFxn = (value) => {
-    client.users.cache
-      .get(userId)
-      .send(
-        `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${value.toLocaleString()}.`
-      )
-      .catch((err) => {
-        logVoteMessageError(err, userId);
-      });
+    let user = client.users.cache.get(userId);
+    if (user) {
+      user
+        .send(
+          `Thanks for voting! You just earned $${points.toLocaleString()}! Your score is now $${value.toLocaleString()}.`
+        )
+        .catch((err) => {
+          logVoteMessageError(err, userId);
+        });
+    }
   };
   let errFxn = () => {
-    client.users.cache
-      .get(userId)
-      .send(
-        `Thanks for voting! Err: Database down. (Sorry! Message the bot creator to complain!)`
-      )
-      .catch((err) => {
-        logVoteMessageError(err, userId);
-      });
+    let user = client.users.cache.get(userId);
+    if (user) {
+      user
+        .send(
+          `Thanks for voting! Err: Database down. (Sorry! Message the bot creator to complain!)`
+        )
+        .catch((err) => {
+          logVoteMessageError(err, userId);
+        });
+    }
   };
   db.upsertPlayer(userId, points, successFxn, errFxn);
 }
