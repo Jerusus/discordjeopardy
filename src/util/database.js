@@ -141,11 +141,10 @@ function upsertPlayer(userId, valueChange, success, optErr) {
     .on('success', (response) => {
       if (response.data.Item == undefined) {
         // player doesn't exist in the db
-        console.log('New player!', userId);
         putPlayer(userId, valueChange, success, optErr);
       } else {
         // player already exists
-        currentScore = response.data.Item.Score;
+        let currentScore = response.data.Item.Score;
         updatePlayer(userId, currentScore + valueChange, success, optErr);
       }
     })
@@ -164,6 +163,12 @@ function upsertPlayer(userId, valueChange, success, optErr) {
 function putPlayer(userId, value, success, optErr) {
   // no negative scores
   value = Math.max(value, 0);
+
+  // don't bother the database if score is 0
+  if (value == 0) {
+    success(0);
+    return;
+  }
 
   const newParams = {
     TableName: constants.playerTable,
@@ -192,6 +197,12 @@ function updatePlayer(userId, value, success, optErr) {
   // no negative scores
   value = Math.max(value, 0);
 
+  // remove item from database if score is 0
+  if (value == 0) {
+    deletePlayer(userId, success, optErr);
+    return;
+  }
+
   const updateParams = {
     TableName: constants.playerTable,
     Key: { UserId: userId },
@@ -217,10 +228,38 @@ function updatePlayer(userId, value, success, optErr) {
   });
 }
 
+function deletePlayer(userId, success, optErr) {
+  if (disableOps) {
+    console.log(`Dev delete player: ${userId}`);
+    return;
+  }
+
+  const deleteParams = {
+    TableName: constants.playerTable,
+    Key: { UserId: userId },
+  }
+
+  docClient.delete(deleteParams, function (err, data) {
+    if (err) {
+      if (optErr) {
+        optErr();
+      }
+      console.error(
+        'Unable to update item. Error JSON:',
+        JSON.stringify(err, null, 2)
+      );
+    } else {
+      console.log(`Deleted user ${userId}.`);
+      success(0);
+    }
+  })
+}
+
 module.exports = {
   getLeaderboard,
   scanChannels,
   addAutoChannel,
   removeAutoChannel,
   upsertPlayer,
+  deletePlayer,
 };
