@@ -8,7 +8,7 @@
   "autoRoundTime": 60000,
   "jeopardyCooldown": 2000,
   "jeopardyAutoCooldown": 3000,
-  "leaderboardCooldown": 600000,
+  "leaderboardCooldown": 1800000,
   "similarityThreshold": 0.6,
   "playerTable": "PlayerData",
   "autoChannelTable": "JeopardyAutoChannel"
