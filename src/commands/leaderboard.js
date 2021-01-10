@@ -2,9 +2,6 @@ const { Command } = require('discord-akairo');
 const constants = require('../constants');
 const db = require('../util/database');
 
-let dbCache;
-let cacheFresh = false;
-
 class LeaderboardCommand extends Command {
   constructor() {
     super('leaderboard', {
