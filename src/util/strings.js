@@ -28,7 +28,7 @@ function isAnswerCorrect(text, answer) {
 
   // remove the beginning 'the' if it exists
   let articles = ['the', 'a', 'an'];
-  for (article of articles) {
+  for (let article of articles) {
     if (answer.indexOf(article + ' ') == 0) {
       if (isAnswerCorrect(text, answer.substring(article.length + 1))) {
         return true;
@@ -44,11 +44,7 @@ function isAnswerCorrect(text, answer) {
     }
   }
 
-  if (similarity > constants.similarityThreshold) {
-    return true;
-  } else {
-    return false;
-  }
+  return similarity > constants.similarityThreshold;
 }
 
 module.exports = {

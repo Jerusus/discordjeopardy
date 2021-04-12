@@ -5,9 +5,9 @@
   "engines": {
     "node": "12.18.3"
   },
-  "main": "src/bot.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node --inspect=8080 src/bot.js",
+    "start": "node --inspect=8080 src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
