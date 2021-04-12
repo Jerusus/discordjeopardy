@@ -13,17 +13,6 @@ const http = require('http');
 const { get } = require('snekfetch');
 const { Intents } = require('discord.js');
 
-const app = express();
-const server = http.createServer(app);
-
-app.get('/', (req, res) => {
-  res.send('ping');
-});
-
-server.listen(process.env.PORT, () => {
-  console.log(`Listening on ${process.env.PORT}`);
-});
-
 class DiscordJeopardyClient extends AkairoClient {
   constructor() {
     super(
@@ -95,11 +84,6 @@ dbl.webhook.on('vote', (vote) => {
     }
   });
 });
-
-// ping self to avoid heroku idling
-setInterval(() => {
-  get(process.env.HOST).then((r) => console.log(`Self ping`));
-}, 300000);
 
 // start auto channels if needed
 setTimeout(() => {
