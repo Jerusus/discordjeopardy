@@ -42,7 +42,6 @@ class DiscordJeopardyClient extends AkairoClient {
       },
       {
         disableMentions: 'everyone',
-        shardCount: 'auto',
       }
     );
 
