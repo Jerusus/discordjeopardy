@@ -9,6 +9,7 @@ const constants = require('./constants');
 const util = require('./util/jeopardy');
 const db = require('./util/database');
 const { Intents } = require('discord.js');
+const express = require('express');
 const app = express();
 const http = require('http');
 const server = http.createServer(app);
