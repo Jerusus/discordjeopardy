@@ -9,6 +9,8 @@ const constants = require('./constants');
 const util = require('./util/jeopardy');
 const db = require('./util/database');
 const { Intents } = require('discord.js');
+const http = require('http');
+const server = http.createServer(app);
 
 class DiscordJeopardyClient extends AkairoClient {
   constructor() {
@@ -49,6 +51,10 @@ const client = new DiscordJeopardyClient();
 
 client.login(process.env.TOKEN).then(() => {
   console.log('Logged in!');
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`Listening on ${process.env.PORT}`);
 });
 
 const dbl = new DBL(
