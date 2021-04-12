@@ -67,16 +67,16 @@ setTimeout(() => {
             })
             .catch((err) => {
               // a failure usually indicates the bot no longer has permissions to post in the channel
-              console.log(
-                `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
-              );
-              console.log(err);
-              util.setChannelState(channelId, false, true);
+              // console.log(
+              //   `ChannelId ${channelId} gave the following error when attempting to send a message. Removing from DB.`
+              // );
+              // console.log(err);
+              // util.setChannelState(channelId, false, true);
             });
         })
         .catch(() => {
-          console.log(`ChannelId ${channelId} not found. Removing from DB.`);
-          util.setChannelState(channelId, false, true);
+          // console.log(`ChannelId ${channelId} not found. Removing from DB.`);
+          // util.setChannelState(channelId, false, true);
         });
     }
   };
