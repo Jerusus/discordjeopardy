@@ -1,5 +1,11 @@
 const { ShardingManager } = require('discord.js');
+const express = require('express');
+const app = express();
 const { get } = require('snekfetch');
+
+app.get('/', (req, res) => {
+  res.send('ping');
+});
 
 // ping self to avoid heroku idling
 setInterval(() => {
