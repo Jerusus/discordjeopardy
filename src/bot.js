@@ -55,40 +55,40 @@ client.login(process.env.TOKEN).then(() => {
   console.log('Logged in!');
 });
 
-server.listen(process.env.PORT, () => {
-  console.log(`Listening on ${process.env.PORT}`);
-});
+// server.listen(process.env.PORT, () => {
+//   console.log(`Listening on ${process.env.PORT}`);
+// });
 
-const dbl = new DBL(
-  process.env.TOPGG_TOKEN,
-  { webhookServer: server, webhookAuth: process.env.TOPGG_WEBHOOKAUTH },
-  client
-);
+// const dbl = new DBL(
+//   process.env.TOPGG_TOKEN,
+//   { webhookServer: server, webhookAuth: process.env.TOPGG_WEBHOOKAUTH },
+//   client
+// );
 
-dbl.on('posted', () => {
-  console.log('Server count posted!');
-});
+// dbl.on('posted', () => {
+//   console.log('Server count posted!');
+// });
 
-dbl.on('error', (e) => {
-  console.log(`Oops! ${e}`);
-});
+// dbl.on('error', (e) => {
+//   console.log(`Oops! ${e}`);
+// });
 
-dbl.webhook.on('ready', (hook) => {
-  console.log(
-    `Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`
-  );
-});
+// dbl.webhook.on('ready', (hook) => {
+//   console.log(
+//     `Webhook running at http://${hook.hostname}:${hook.port}${hook.path}`
+//   );
+// });
 
-dbl.webhook.on('vote', (vote) => {
-  console.log(`User with ID ${vote.user} just voted!`);
-  dbl.isWeekend().then((weekend) => {
-    if (weekend) {
-      grantVoteBonus(vote.user, 2);
-    } else {
-      grantVoteBonus(vote.user, 1);
-    }
-  });
-});
+// dbl.webhook.on('vote', (vote) => {
+//   console.log(`User with ID ${vote.user} just voted!`);
+//   dbl.isWeekend().then((weekend) => {
+//     if (weekend) {
+//       grantVoteBonus(vote.user, 2);
+//     } else {
+//       grantVoteBonus(vote.user, 1);
+//     }
+//   });
+// });
 
 // start auto channels if needed
 setTimeout(() => {
