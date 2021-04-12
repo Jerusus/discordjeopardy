@@ -2,9 +2,15 @@ const { ShardingManager } = require('discord.js');
 const express = require('express');
 const app = express();
 const { get } = require('snekfetch');
+const http = require('http');
+const server = http.createServer(app);
 
 app.get('/', (req, res) => {
   res.send('ping');
+});
+
+server.listen(process.env.PORT, () => {
+  console.log(`Listening on ${process.env.PORT}`);
 });
 
 // ping self to avoid heroku idling
