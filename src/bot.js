@@ -8,9 +8,6 @@ const DBL = require('dblapi.js');
 const constants = require('./constants');
 const util = require('./util/jeopardy');
 const db = require('./util/database');
-const express = require('express');
-const http = require('http');
-const { get } = require('snekfetch');
 const { Intents } = require('discord.js');
 
 class DiscordJeopardyClient extends AkairoClient {

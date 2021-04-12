@@ -1,6 +1,9 @@
 const { ShardingManager } = require('discord.js');
+const express = require('express');
 const app = express();
+const http = require('http');
 const server = http.createServer(app);
+const { get } = require('snekfetch');
 
 app.get('/', (req, res) => {
   res.send('ping');
