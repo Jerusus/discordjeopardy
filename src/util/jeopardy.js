@@ -81,6 +81,9 @@ function handleMessages(resolve, channel, jObj, isAuto) {
   );
   collector.on('collect', (m) => {
     let text = m.toString().toLowerCase();
+    // Recognize commannds that @ mention the bot at the beginniing of the message.
+    // Removes a string like <@710708430427521086>.
+    text = text.replace(/\<.*\>/, '').trim();
     if (text === 'quit' || text === constants.flag + 'quit') {
       collector.stop('quit');
     } else if (
