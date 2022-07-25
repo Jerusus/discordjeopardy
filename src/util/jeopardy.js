@@ -124,25 +124,27 @@ function handleMessages(resolve, channel, jObj, isAuto) {
 
 async function getQuestion() {
   // grab the jeopardy question and parse
-  const url = 'http://www.jservice.io/api/random';
-  let res = JSON.parse((await get(url)).text)[0];
+  const url = 'http://cluebase.lukelav.in/';
+  let res = JSON.parse((await get(url + 'clues/random')).text).data[0];
   if (
-    !res.question ||
+    !res.clue ||
     !res.category ||
-    res.question == 'null' ||
-    res.question.trim() == '' ||
-    res.question == '=' ||
-    res.question.includes('video clue') ||
-    res.question.includes('audio clue') ||
-    res.question.includes('seen here') ||
-    res.answer.includes('----') ||
-    res.answer == '='
+    res.clue == 'null' ||
+    res.clue.trim() == '' ||
+    res.clue == '=' ||
+    res.clue.includes('video clue') ||
+    res.clue.includes('audio clue') ||
+    res.clue.includes('seen here') ||
+    res.response.includes('----') ||
+    res.response == '='
   ) {
     return getQuestion();
   }
 
+  let airdate = JSON.parse((await get(url + 'games/' + res.game_id)).text).data[0].air_date;
+
   // clean up html elements
-  let answer = res.answer.replace(/<(?:.|\n)*?>/gm, '');
+  let answer = res.response.replace(/<(?:.|\n)*?>/gm, '');
   // normalize answer for matching
   let normalizedAnswer = answer.replace(/[^a-zA-Z0-9() ]/g, '').toLowerCase();
   // clean up value
@@ -154,10 +156,10 @@ async function getQuestion() {
   return new JeopardyObject(
     answer,
     normalizedAnswer,
-    res.question,
+    res.clue,
     value,
     res.category,
-    res.airdate
+    airdate
   );
 }
 
@@ -168,7 +170,7 @@ function getPrompt(jObj) {
     month: 'short',
   });
   const fDate = dateFormat.format(date);
-  return `The category is **${jObj.category.title}** for $${jObj.value}:\n\`\`\`(${fDate}) ${jObj.question}\`\`\``;
+  return `The category is **${jObj.category}** for $${jObj.value}:\n\`\`\`(${fDate}) ${jObj.question}\`\`\``;
 }
 
 function updatePlayerScore(m, valueChange) {
